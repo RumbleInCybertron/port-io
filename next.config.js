@@ -2,7 +2,9 @@
 const nextConfig = {
   experimental: {
     appDir: true,
+    serverActions: true,
   },
+  reactStrictMode: true,
 }
 
 module.exports = nextConfig
