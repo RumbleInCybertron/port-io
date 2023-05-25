@@ -1,18 +1,25 @@
-import './globals.css'
+import '@/styles/globals.css'
+import { SessionProvider } from 'next-auth/react';
+import { Suspense } from 'react'
+import Loading from '@/app/loading';
+import Navbar from '@/app/components/Navbar';
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      {/*
-        <head /> will contain the components returned by the nearest parent
-        head.tsx. Find out more at https://beta.nextjs.org/docs/api-reference/file-conventions/head
-      */}
-      <head />
-      <body>{children}</body>
-    </html>
+    <SessionProvider>
+      <Suspense fallback={<Loading />}>
+        <html lang="en">
+          <head>
+            <title>Port IO</title>
+          </head>
+          <Navbar />
+          <body>
+            <div className="container mx-auto">
+              {children}
+            </div>
+          </body>
+        </html>
+      </Suspense>
+    </SessionProvider>
   )
 }
