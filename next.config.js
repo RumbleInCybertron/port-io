@@ -3,12 +3,13 @@ const nextConfig = {
   experimental: {
     appDir: true,
     serverActions: true,
+    serverComponentsExternalPackages: ["@prisma/client", "bcryptjs"]
   },
   reactStrictMode: true,
   rewrites: async () => [
     {
       source: "/public/myfile.html",
-      destination: "/pages/api/myfile.js",
+      destination: "/app/pages/api/myfile.js",
     },
   ],
   output: 'standalone',
