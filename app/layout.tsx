@@ -3,7 +3,6 @@
 // import '@/styles/globals.css'
 import { Suspense } from 'react'
 import Loading from '@/app/loading';
-import Navbar from '@/components/Navbar';
 import { NextAuthProvider } from '@/app/context/provider';
 
 
