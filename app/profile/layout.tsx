@@ -1,10 +1,11 @@
 import React from 'react';
 
-import styles from '@/app/layout.module.css'
+import Navbar from '@/app/components/Navbar';
 
 export default function Layout({ children }: { children: React.ReactNode}) {
   return (
-    <div className={styles.innerLayout}>
+    <div>
+      {/* <Navbar /> */}
      <div>
         Announcements: Tomorrow is a holiday!
       </div>
