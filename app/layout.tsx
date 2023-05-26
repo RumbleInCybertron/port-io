@@ -1,25 +1,22 @@
-import '@/styles/globals.css'
-import { SessionProvider } from 'next-auth/react';
+"use client"
+
+// import '@/styles/globals.css'
 import { Suspense } from 'react'
 import Loading from '@/app/loading';
-import Navbar from '@/app/components/Navbar';
+import Navbar from '@/components/Navbar';
+import { NextAuthProvider } from '@/app/context/provider';
+
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <SessionProvider>
-      <Suspense fallback={<Loading />}>
-        <html lang="en">
-          <head>
-            <title>Port IO</title>
-          </head>
-          <Navbar />
-          <body>
-            <div className="container mx-auto">
-              {children}
-            </div>
-          </body>
-        </html>
-      </Suspense>
-    </SessionProvider>
+    // <Suspense fallback={<Loading />}>
+    <html lang="en">
+      <body>
+        <NextAuthProvider>
+          {children}
+        </NextAuthProvider>
+      </body>
+    </html>
+    // </Suspense>
   )
 }
