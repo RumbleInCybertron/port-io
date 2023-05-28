@@ -8,17 +8,16 @@ import { signOut, useSession } from "next-auth/react";
 import useDarkMode from "@/utils/hooks/useDarkMode";
 import { signIn } from "next-auth/react";
 
-interface AppbarProps { }
-
-const Appbar: React.FC<AppbarProps> = () => {
+const Appbar = () => {
   const router = useRouter();
   const pathname = usePathname();
 
   const { data: session, status } = useSession();
+  const user = session?.user;
   const [colorTheme, setTheme] = useDarkMode();
 
   const handleClick = () => {
-    const email = session?.user?.email;
+    const email = user?.email;
     router.push(pathname! + "?email=" + email);
   }
 
@@ -60,7 +59,7 @@ const Appbar: React.FC<AppbarProps> = () => {
             </button>
 
           )}
-          {session ? (
+          {user ? (
             <>
               <button
                 type="button"
@@ -75,19 +74,26 @@ const Appbar: React.FC<AppbarProps> = () => {
                 {<FiLogOut className="ml-1" />}
               </button>
               <Image
-                src={session?.user?.image || "/user.svg"}
-                alt={session?.user?.name!}
+                src={user?.image || "/user.svg"}
+                alt={user?.name!}
                 className="w-8 h-8 rounded-full"
                 width="100"
                 height="100"
               />
             </>
           ) : (
-            <Link href="/api/auth/signin">
-              <span className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full">
-                <a onClick={()=> signIn()}>Sign In</a>
-              </span>
-            </Link>
+            <div>
+              <Link href="/login">
+                <span className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full">
+                  <a onClick={()=> signIn()}>Sign In</a>
+                </span>
+              </Link>
+              <Link href="/register">
+                <span className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full">
+                  <a>Register</a>
+                </span>
+              </Link>
+            </div>
           )}
         </div>
       </header>
