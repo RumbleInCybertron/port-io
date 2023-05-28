@@ -24,8 +24,8 @@ module.exports = {
         padding: '1rem',
         screens: {
           lg: '1125px',
-          xl: '1125px',
-          '2xl': '1125px',
+          xl: '1920px',
+          '2xl': '2560px',
         },
       },
     },
