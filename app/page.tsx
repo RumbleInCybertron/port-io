@@ -1,10 +1,4 @@
 import '@/app/styles/globals.css'
-import {
-  LoginButton,
-  LogoutButton,
-  ProfileButton,
-  RegisterButton,
-} from "@/components/Buttons";
 import Navbar from '@/components/Navbar';
 
 export default function Home() {
