@@ -84,7 +84,7 @@ const Appbar = () => {
           ) : (
             <div>
               <Link href="/login">
-                <span className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full">
+                <span className="bg-purple-600 hover:bg-green-600 text-white px-4 py-2 rounded-full">
                   <a onClick={()=> signIn()}>Sign In</a>
                 </span>
               </Link>
