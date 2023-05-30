@@ -3,7 +3,7 @@
 import '@/app/styles/globals.css';
 import { Portfolio, PortfolioProps } from "@/components/Portfolio";
 import Navbar from "@/components/Navbar";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from "next/navigation";
 
 export default function PortfoliosPage() {
@@ -11,23 +11,28 @@ export default function PortfoliosPage() {
   const [portfolios, setPortfolios] = useState([]);
   const [error, setError] = useState("");
 
-  const callApi = async () => {
-    try {      
-      const res = await fetch("/api/portfolios", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      setPortfolios(await res.json());
-      if (!res.ok) {
-        setError((await res.json()).message);
-        return;
+  useEffect(() => {
+    const callApi = async () => {
+      try {
+        const res = await fetch("/api/portfolios", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        setPortfolios(await res.json());
+        if (!res.ok) {
+          setError((await res.json()).message);
+          return;
+        }
+      } catch (error) {
+        console.error(error);
       }
-    } catch (error) {
-      console.error(error);
-    }
-  };
+    };
+    
+    const result = callApi().catch(console.error);
+    console.log(result);
+  }, []);
 
   return (
     <>

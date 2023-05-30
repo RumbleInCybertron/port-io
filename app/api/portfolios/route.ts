@@ -13,17 +13,17 @@ export async function GET() {
 
     const portfolios = await prisma.portfolio.findMany({
       where: { userId: user!.id},
-      // select: {
-      //   id: true,
-      //   name: true,
-      //   stockAssets: { select: { name: true, amount: true, average: true, id: true } },
-      //   cryptoAssets: { select: { name: true, amount: true, id: true } }
-      // }
+      select: {
+        id: true,
+        name: true,
+        stockAssets: { select: { name: true, amount: true, average: true, id: true } },
+        cryptoAssets: { select: { name: true, amount: true, id: true } }
+      }
     });
 
-    return NextResponse.json({
-      portfolios
-    });
+    console.log("Portfolios: ", portfolios);
+
+    return NextResponse.json(portfolios);
   } catch (error: any) {
     return new NextResponse(
       JSON.stringify({
