@@ -1,5 +1,5 @@
 import React from 'react';
-import Router from 'next/router';
+import { usePathname, useRouter } from "next/navigation";
 import ReactMarkdown from 'react-markdown';
 
 export type PortfolioProps = {
@@ -8,12 +8,13 @@ export type PortfolioProps = {
 };
 
 export const Portfolio = ({ ...portfolio }: PortfolioProps) => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const uri = pathname! + "?id=" + portfolio.id;
+
   return (
     <div onClick={() =>
-      Router.push({
-        pathname: '/portfolio',
-        query: { id: portfolio.id },
-      })
+      router.push(uri)
     }>
       <small>{portfolio.name}</small>
       <ReactMarkdown>{portfolio.name}</ReactMarkdown>
