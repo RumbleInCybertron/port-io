@@ -7,3 +7,89 @@
 html {
   font-family: 'Poppins', sans-serif;
 }
+
+/* Progress bar (lib) */
+#nprogress .bar {
+  @apply !bg-secondary !h-[4px];
+}
+
+/* Custom */
+.error-message {
+  @apply text-sm text-red-500 mt-2;
+}
+
+@layer base {
+  /* Headings */
+  h1 {
+    @apply text-4xl font-bold mb-4;
+  }
+  h3 {
+    @apply text-xl font-bold text-gray-600 mb-0;
+  }
+
+  /* Labels */
+  label {
+    @apply block mb-1 text-xs font-bold text-gray-500;
+  }
+  label.has-error {
+    @apply text-red-700;
+  }
+
+  /* Input fields */
+  input,
+  select {
+    @apply px-4 h-[40px] rounded w-full transition focus:outline-none bg-gray-100 hover:bg-gray-50 focus:ring-offset-2 focus:ring-2 focus:ring-secondary hover:ring-2 hover:ring-secondary;
+  }
+  input:disabled,
+  select:disabled {
+    @apply cursor-not-allowed opacity-75 hover:ring-0 bg-gray-300;
+  }
+  input.has-error,
+  select.has-error {
+    @apply ring-2 ring-offset-2 ring-red-700;
+  }
+
+  /* Types of buttons */
+  button.transparent,
+  button[type="button"].transparent,
+  button[type="submit"].transparent {
+    @apply px-2 py-1 rounded bg-transparent hover:bg-primary/10 text-primary transition flex items-center justify-center;
+  }
+   button,
+  button[type="button"],
+  button[type="submit"] {
+    @apply px-4 py-2 rounded bg-primary hover:bg-primary/75 text-white transition flex items-center justify-center;
+  }
+
+  /* Colors of buttons */
+  /* button.secondary,
+  button[type="button"].secondary,
+  button[type="submit"].secondary {
+    @apply bg-secondary hover:bg-secondary/75;
+  }
+  button.transparent.secondary,
+  button[type="button"].transparent.secondary,
+  button[type="submit"].transparent.secondary {
+    @apply bg-transparent text-secondary hover:bg-secondary/10;
+  } */
+
+  /* Sizes of buttons */
+  button.small,
+  button[type="button"].small,
+  button[type="submit"].small {
+    @apply px-2 py-1 text-sm;
+  }
+
+  /* Button statuses */
+  button:disabled {
+    @apply !cursor-not-allowed !bg-gray-600 hover:!bg-gray-400;
+  }
+
+  /* Links */
+  a {
+    @apply transition font-bold hover:underline hover:text-black text-gray-500 !no-underline;
+  }
+  body {
+    @apply dark:bg-gray-800 bg-white
+  }
+}
