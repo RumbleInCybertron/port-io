@@ -21,8 +21,6 @@ export async function GET() {
       }
     });
 
-    console.log("Portfolios: ", portfolios);
-
     return NextResponse.json(portfolios);
   } catch (error: any) {
     return new NextResponse(
