@@ -52,7 +52,7 @@ export default function PortfoliosPage() {
               </div>
             ))
           )}
-        <button onClick={() => router.push("/portfolio")}>+ add</button>
+        <button onClick={() => router.push("/portfolio/create")}>+ add</button>
       </div>
     </>
   );

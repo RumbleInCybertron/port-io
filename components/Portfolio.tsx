@@ -1,5 +1,5 @@
 import React from 'react';
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import ReactMarkdown from 'react-markdown';
 
 export type PortfolioProps = {
@@ -9,8 +9,7 @@ export type PortfolioProps = {
 
 export const Portfolio = ({ ...portfolio }: PortfolioProps) => {
   const router = useRouter();
-  const pathname = usePathname();
-  const uri = pathname! + "?id=" + portfolio.id;
+  const uri = "/portfolio" + "?id=" + portfolio.id;
 
   return (
     <div onClick={() =>
