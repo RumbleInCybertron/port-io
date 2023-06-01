@@ -2,7 +2,7 @@
 
 import '@/app/styles/globals.css';
 import { CryptoAsset, CryptoAssetProps, StockAsset, StockAssetProps } from "@/components/portfolio/Asset";
-import { Portfolio, PortfolioProps } from "@/components/Portfolio";
+import { Portfolio } from "@/components/Portfolio";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
