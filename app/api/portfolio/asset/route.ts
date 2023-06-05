@@ -1,14 +1,11 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { useSearchParams } from "next/navigation";
 
 export async function PUT(req: Request) {
   try {
-    const { portfolioId, type, name, ticker, index, amount, price } = (await req.json()) as {
+    const { id, type, name, ticker, index, amount, price } = (await req.json()) as {
+      id: string;
       type: string;
-      portfolioId: string;
       name: string;
       ticker: string;
       index: string;
@@ -16,16 +13,10 @@ export async function PUT(req: Request) {
       price: number;
     };
 
-    const session = await getServerSession(authOptions);
-    const user = await prisma.user.findUniqueOrThrow({
-      where: { email: String(session?.user?.email) },
-      select: { id: true },
-    });
-
     if(type === "stock") {
       const data = await prisma.stockAsset.findFirst({
         where: {
-          AND: [{ name: name}, {portfolioId: portfolioId}]
+          AND: [{ name: name}, {portfolioId: id}]
         },
         select: {id: true, amount: true, average: true}
       });
@@ -35,9 +26,9 @@ export async function PUT(req: Request) {
         console.log("Total Amount: ", ttl_amt);
         const average = ((data.average * data.amount) + (price + amount)) / ttl_amt;
         const stock = await prisma.stockAsset.update({
-          where: {id: data.id},
+          where: {id: id},
           data: {
-            portfolioId,    
+            portfolioId: data.id,    
             name,
             ticker,
             index,
@@ -49,7 +40,7 @@ export async function PUT(req: Request) {
       } else if (data === null) {
         const stock = await prisma.stockAsset.create({
           data: {
-            portfolioId,    
+            portfolioId: id,    
             name,
             ticker,
             index,
@@ -63,7 +54,7 @@ export async function PUT(req: Request) {
     } else if (type === "crypto") {
       const data = await prisma.cryptoAsset.findFirst({
         where: {
-          AND: [{ name: name}, {portfolioId: portfolioId}]
+          AND: [{ name: name}, {portfolioId: id}]
         },
         select: {id: true, amount: true, average: true}
       });
@@ -74,7 +65,7 @@ export async function PUT(req: Request) {
         const crypto = await prisma.cryptoAsset.update({
           where: {id: data.id},
           data: {
-            portfolioId,    
+            portfolioId: id,    
             name,
             ticker,
             amount: Number(ttl_amt),
@@ -85,7 +76,7 @@ export async function PUT(req: Request) {
       } else if (data === null) {
         const stock = await prisma.cryptoAsset.create({
           data: {
-            portfolioId,    
+            portfolioId: id,    
             name,
             ticker,
             amount: Number(amount),
@@ -110,12 +101,6 @@ export async function PUT(req: Request) {
 
 export async function GET(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    const user = await prisma.user.findUniqueOrThrow({
-      where: { email: String(session?.user?.email) },
-      select: { id: true },
-    }); 
-
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
     if(id === null) return NextResponse.json(JSON.stringify({status: "error", message: "id is null idiot"}), {status: 403})
