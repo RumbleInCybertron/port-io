@@ -1,3 +1,5 @@
+"use client"
+
 import { TransactionProps } from "@/components/portfolio/Transaction";
 import Router from "next/router";
 import ReactMarkdown from "react-markdown";
@@ -6,6 +8,7 @@ export type StockAssetProps = {
   id: string;
   name: string;
   ticker: string;
+  index: string;
   amount: number;
   average: number;
   updatedAt: Date;
@@ -22,10 +25,11 @@ export type CryptoAssetProps = {
   // transactions: TransactionProps[];
 };
 
-export const StockAsset = ({id, name, ticker, amount, average, updatedAt}: StockAssetProps) => {
+export const StockAsset = ({id, name, ticker, index, amount, average, updatedAt}: StockAssetProps) => {
   return (
     <div className="text-inherit p-2" onClick={() => Router.push("/portfolio/asset/[id]", `/portfolio/asset/${id}`)}>
       <small>{name}: {ticker} </small>
+      <small>{name}: {index} </small>
       <small>Shares: {amount} ${average}</small>
       <small>Last Updated: {updatedAt.toDateString()}</small>
       <ReactMarkdown>{name}</ReactMarkdown>
