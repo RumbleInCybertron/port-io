@@ -2,7 +2,7 @@ import '@/app/styles/globals.css';
 import { PortfolioForm } from "./form";
 import Navbar from "@/components/Navbar";
 
-export default function PortfolioPage() {
+export default function CreatePortfolioPage() {
   return (
     <>
       <Navbar />
