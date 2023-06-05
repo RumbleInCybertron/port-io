@@ -74,7 +74,7 @@ const Appbar = () => {
                 {<FiLogOut className="ml-1" />}
               </button>
               <Image
-                src={user?.image || "/user.svg"}
+                src={user?.image || "/images/KitsuneCom.jpg"} // TODO: use user?.image or /user.svg
                 alt={user?.name!}
                 className="w-8 h-8 rounded-full"
                 width="100"
