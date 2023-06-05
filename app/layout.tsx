@@ -1,19 +1,18 @@
 "use client"
 
-// import '@/styles/globals.css'
+// import '@/app/styles/globals.css'
 import { Suspense } from 'react'
 import Loading from '@/app/loading';
-import { NextAuthProvider } from '@/app/context/provider';
-
+import { Providers } from '@/app/context/provider';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     // <Suspense fallback={<Loading />}>
     <html lang="en">
       <body>
-        <NextAuthProvider>
+        <Providers>
           {children}
-        </NextAuthProvider>
+        </Providers>
       </body>
     </html>
     // </Suspense>
