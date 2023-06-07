@@ -4,23 +4,34 @@ import '@/app/styles/globals.css';
 import { ChangeEvent, Key, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Dropdown } from "@nextui-org/react";
+import Navbar from '@/components/Navbar';
+import { useSession } from 'next-auth/react';
 
-export const AssetForm = () => {
+export type Portfolio = {
+  id: string
+}
+
+export const AssetForm = (portfolio: Portfolio) => {
   const router = useRouter();
+  const { data: session, status } = useSession();
+  const user = session?.user;
+
   const [stockFormValues, setStockFormValues] = useState({
+    portfolioId: "",
     name: "",
     ticker: "",
     index: "",
     amount: 0,
     price: 0,
-    type: "crypto",
+    type: "stock",
   });
   const [cryptoFormValues, setCryptoFormValues] = useState({
+    portfolioId: "",
     name: "",
     ticker: "",
     amount: 0,
     price: 0,
-    type: "stock",
+    type: "crypto",
   });
 
   const [type, setType] = useState("stock");
@@ -28,13 +39,14 @@ export const AssetForm = () => {
   const [error, setError] = useState("");
 
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/portfolios";
-  const portfolioId = searchParams.get("id");
+  const uri = "/portfolios/" + user?.email;
+  const callbackUrl = searchParams.get("callbackUrl") || uri;
+  // const portfolioId = searchParams.get("id");
 
   const onStockSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setStockFormValues({ name: "", ticker: "", index: "", amount: 0, price: 0, type: "stock" });
-    const body = { ...stockFormValues, portfolioId };
+    setStockFormValues({ portfolioId: portfolio.id, name: "", ticker: "", index: "", amount: 0, price: 0, type: "stock" });
+    const body = { ...stockFormValues };
 
     try {
       const res = await fetch("/api/portfolio/asset", {
@@ -59,12 +71,14 @@ export const AssetForm = () => {
 
   const onCryptoSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setCryptoFormValues({ name: "", ticker: "", amount: 0, price: 0, type: "crypto" });
+    setCryptoFormValues({ portfolioId: portfolio.id, name: "", ticker: "", amount: 0, price: 0, type: "crypto" });
+    const body = { ...cryptoFormValues };
+    console.log("Body: ", body);
 
     try {
       const res = await fetch("/api/portfolio/asset", {
         method: "PUT",
-        body: JSON.stringify(cryptoFormValues),
+        body: JSON.stringify(body),
         headers: {
           "Content-Type": "application/json",
         },
@@ -98,6 +112,8 @@ export const AssetForm = () => {
   };
 
   return (
+    <>    
+    <Navbar />
     <section className="bg-purple-600 min-h-screen pt-20">
       <div className="container mx-auto px-6 py-12 h-full flex justify-center items-center">
         <div className="md:w-8/12 lg:w-5/12 bg-dark-200 px-8 py-10">
@@ -264,5 +280,6 @@ export const AssetForm = () => {
         </div>
       </div>
     </section>
+    </>
   );
 };
