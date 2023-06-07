@@ -26,6 +26,8 @@ export default async function Profile() {
                     src={user.image ? user.image : "/images/default.png"}
                     className="max-h-36"
                     alt={`profile photo of ${user.name}`}
+                    width="100"
+                    height="50"
                   />
                 </div>
                 <div className="mt-8">
