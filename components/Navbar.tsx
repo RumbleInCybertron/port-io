@@ -4,9 +4,10 @@ import { FiSun, FiMoon, FiLogOut, FiUser } from "react-icons/fi";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { signOut, useSession } from "next-auth/react";
+import { signOut, signIn, useSession } from "next-auth/react";
 import useDarkMode from "@/utils/hooks/useDarkMode";
-import { signIn } from "next-auth/react";
+
+// signOut({callbackUrl: "/login"});
 
 const Appbar = () => {
   const router = useRouter();
@@ -20,6 +21,8 @@ const Appbar = () => {
     const email = user?.email;
     router.push(pathname! + "?email=" + email);
   }
+
+  const uri = "/portfolios/" + user?.email;
 
   return (
     status === "loading" ?
@@ -35,7 +38,7 @@ const Appbar = () => {
           <Link href="/">
             <span className="text-gray-500 hover:text-gray-900">Home</span>
           </Link>
-          <Link href="/portfolios">
+          <Link href={uri}>
             <span className="text-gray-500 hover:text-gray-900">Assets</span>
           </Link>
         </div>
@@ -73,6 +76,7 @@ const Appbar = () => {
               >
                 {<FiLogOut className="ml-1" />}
               </button>
+              <div>{user.name}</div>
               <Image
                 src={user?.image || "/images/KitsuneCom.jpg"} // TODO: use user?.image or /user.svg
                 alt={user?.name!}
