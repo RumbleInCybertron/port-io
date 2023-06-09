@@ -1,6 +1,5 @@
 "use client"
 
-import { useEffect } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -60,7 +59,7 @@ export function LineChart(data: DataProps) {
   return (
     <>
       {/* line chart */}
-      <h1 className="w-[110px] mx-auto mt-10 text-xl font-semibold capitalize ">ラインチャート</h1>
+      <div className="w-[150px] mx-auto mt-10 text-2xl">ラインチャート</div>
       <Line data={data} width={100} height={40} options={options} />
     </>
   );
