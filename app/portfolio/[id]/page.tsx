@@ -12,7 +12,7 @@ export default async function PortfolioPage({ params }: { params: { id: string }
     }
   });
 
-  console.log("Portfolio: ", portfolio);
+  console.log("Portfolio w/ ID param: ", portfolio);
   return (
     <GetPortfolio {...portfolio} />
   )
