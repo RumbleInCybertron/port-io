@@ -209,7 +209,10 @@ export const AssetForm = (portfolio: Portfolio) => {
                     </a>
                   </form>
                   :
-                  <form onSubmit={onCryptoSubmit}>
+                  <form
+                    // onSubmit={onCryptoSubmit}
+                    action="/api/portfolio/asset"
+                  >
                     {error && (
                       <p className="text-center bg-red-300 py-4 mb-6 rounded">{error}</p>
                     )}
