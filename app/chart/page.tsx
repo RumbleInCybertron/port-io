@@ -1,7 +1,9 @@
+import '@/app/styles/globals.css'
 import { LineChart } from "@/components/charts/LineChart";
 import { getThirtyDays } from "@/utils/getThirtyDays";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import Navbar from "@/components/Navbar";
 
 export default async function LineChartPage() {
   const session = await getServerSession(authOptions);
@@ -53,7 +55,7 @@ export default async function LineChartPage() {
     }, {
       data: [70, 90, 44, 60, 83, 90, 100, 70, 90, 44, 60, 83, 90, 100, 70, 90, 44, 60, 83, 90, 100, 86, 114, 106, 106, 107, 111, 133, 86, 114],
     }, {
-      data: [10, 21, 60, 44, 17, 21, 17, 10, 21, 60, 44, 17, 21, 17, 10, 21, 60, 44, 17, 21, 17, 21, 17, 10, 21, 60, 44, 17, 21, 17, ],
+      data: [10, 21, 60, 44, 17, 21, 17, 10, 21, 60, 44, 17, 21, 17, 10, 21, 60, 44, 17, 21, 17, 21, 17, 10, 21, 60, 44, 17, 21, 17,],
     }, {
       data: [6, 3, 2, 2, 7, 0, 16, 6, 3, 2, 2, 7, 0, 16, 6, 3, 100, 87, 7, 0, 16, 6, 3, 2, 2, 7, 0, 16, 2, 19],
     }
@@ -61,6 +63,9 @@ export default async function LineChartPage() {
   };
 
   return (
-    <LineChart {...data} />
+    <>
+      <Navbar />
+      <LineChart {...data} />
+    </>
   )
 }
