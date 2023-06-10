@@ -23,7 +23,8 @@ export const AssetForm = (portfolio: Portfolio) => {
     index: "",
     amount: 0,
     price: 0,
-    type: "stock",
+    assetType: "stock",
+    transactionType: "",
   });
   const [cryptoFormValues, setCryptoFormValues] = useState({
     portfolioId: "",
@@ -31,21 +32,31 @@ export const AssetForm = (portfolio: Portfolio) => {
     ticker: "",
     amount: 0,
     price: 0,
-    type: "crypto",
+    assetType: "crypto",
+    transactionType: "",
   });
 
-  const [type, setType] = useState("stock");
+  const [assetType, setAssetType] = useState("stock");
+  const [transactionType, setTransactionType] = useState("long");
 
   const [error, setError] = useState("");
 
   const searchParams = useSearchParams();
   const uri = "/portfolios/" + user?.email;
   const callbackUrl = searchParams.get("callbackUrl") || uri;
-  // const portfolioId = searchParams.get("id");
 
   const onStockSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setStockFormValues({ portfolioId: portfolio.id, name: "", ticker: "", index: "", amount: 0, price: 0, type: "stock" });
+    setStockFormValues({
+      portfolioId: portfolio.id,
+      name: "",
+      ticker: "",
+      index: "",
+      amount: 0,
+      price: 0,
+      assetType: "stock",
+      transactionType: transactionType,
+    });
     const body = { ...stockFormValues };
 
     try {
@@ -71,7 +82,15 @@ export const AssetForm = (portfolio: Portfolio) => {
 
   const onCryptoSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setCryptoFormValues({ portfolioId: portfolio.id, name: "", ticker: "", amount: 0, price: 0, type: "crypto" });
+    setCryptoFormValues({ 
+      portfolioId: portfolio.id, 
+      name: "", 
+      ticker: "", 
+      amount: 0, 
+      price: 0, 
+      assetType: "crypto",
+      transactionType: transactionType,
+     });
     const body = { ...cryptoFormValues };
     console.log("Body: ", body);
 
@@ -106,8 +125,13 @@ export const AssetForm = (portfolio: Portfolio) => {
     setCryptoFormValues({ ...cryptoFormValues, [name]: value });
   };
 
-  const handleAction = (type: Key) => {
-    setType(type.toString());
+  const handleAssetTypeAction = (type: Key) => {
+    setAssetType(type.toString());
+    console.log(type);
+  };
+
+  const handleTransactionTypeAction = (type: Key) => {
+    setTransactionType(type.toString());
     console.log(type);
   };
 
@@ -117,18 +141,29 @@ export const AssetForm = (portfolio: Portfolio) => {
       <section className="bg-purple-600 min-h-screen pt-20">
         <div className="container mx-auto px-6 py-12 h-full flex justify-center items-center">
           <div className="md:w-8/12 lg:w-5/12 bg-dark-200 px-8 py-10">
-            <div>
-              <Dropdown>
-                <Dropdown.Button flat>Asset Type</Dropdown.Button>
-                <Dropdown.Menu onAction={(key) => { handleAction(key) }}>
-                  <Dropdown.Item key="stock">Stock</Dropdown.Item>
-                  <Dropdown.Item key="crypto" withDivider>Crypto</Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
+            <div className="flex">
+              <div className="mx-2">
+                <Dropdown>
+                  <Dropdown.Button flat>Asset Type</Dropdown.Button>
+                  <Dropdown.Menu onAction={(key) => { handleAssetTypeAction(key) }}>
+                    <Dropdown.Item key="stock">Stock</Dropdown.Item>
+                    <Dropdown.Item key="crypto" withDivider>Crypto</Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
+              </div>
+              <div>
+                <Dropdown>
+                  <Dropdown.Button flat>Transaction Type</Dropdown.Button>
+                  <Dropdown.Menu onAction={(key) => { handleTransactionTypeAction(key) }}>
+                    <Dropdown.Item key="long">Buy / Long</Dropdown.Item>
+                    <Dropdown.Item key="short" withDivider>Sell / Short</Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
+              </div>
             </div>
             <div className="flex justify-center p-3">
               {
-                type === "stock"
+                assetType === "stock"
                   ?
                   <form onSubmit={onStockSubmit}>
                     {error && (
