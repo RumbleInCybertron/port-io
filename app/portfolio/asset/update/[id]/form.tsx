@@ -24,7 +24,7 @@ export const AssetForm = (portfolio: Portfolio) => {
     amount: 0,
     price: 0,
     assetType: "stock",
-    transactionType: "",
+    // transactionType: "",
   });
   const [cryptoFormValues, setCryptoFormValues] = useState({
     portfolioId: "",
@@ -33,7 +33,7 @@ export const AssetForm = (portfolio: Portfolio) => {
     amount: 0,
     price: 0,
     assetType: "crypto",
-    transactionType: "",
+    // transactionType: "",
   });
 
   const [assetType, setAssetType] = useState("stock");
@@ -55,9 +55,9 @@ export const AssetForm = (portfolio: Portfolio) => {
       amount: 0,
       price: 0,
       assetType: "stock",
-      transactionType: transactionType,
     });
-    const body = { ...stockFormValues };
+    const body = { ...stockFormValues, transactionType };
+    console.log("Body: ", body)
 
     try {
       const res = await fetch("/api/portfolio/asset", {
@@ -89,9 +89,8 @@ export const AssetForm = (portfolio: Portfolio) => {
       amount: 0, 
       price: 0, 
       assetType: "crypto",
-      transactionType: transactionType,
      });
-    const body = { ...cryptoFormValues };
+     const body = { ...cryptoFormValues, transactionType };
     console.log("Body: ", body);
 
     try {
@@ -245,8 +244,8 @@ export const AssetForm = (portfolio: Portfolio) => {
                   </form>
                   :
                   <form
-                    // onSubmit={onCryptoSubmit}
-                    action="/api/portfolio/asset"
+                    onSubmit={onCryptoSubmit}
+                    // action="/api/portfolio/asset"
                   >
                     {error && (
                       <p className="text-center bg-red-300 py-4 mb-6 rounded">{error}</p>
