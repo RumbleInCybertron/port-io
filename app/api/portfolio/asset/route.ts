@@ -3,6 +3,53 @@ import { prisma } from "@/lib/prisma";
 import { createTransaction } from "@/utils/createTransaction";
 import { NextRequest, NextResponse } from "next/server";
 
+async function createAsset(
+    portfolioId: string, 
+    name: string, 
+    ticker: string, 
+    index: string,
+    amount: number,
+    price: number,
+    transactionType: string,
+    assetType: string,
+  ){
+  return await prisma.$transaction(async (tx)=>{
+    let asset;
+    if (assetType === "stock"){
+      asset = await tx.stockAsset.create({
+        data: {
+          portfolioId: portfolioId,    
+          name,
+          ticker,
+          index,
+          amount: Number(amount),
+          average: Number(price),
+        }
+      });
+    } else if (assetType === "crypto") {
+      asset = await tx.cryptoAsset.create({
+        data: {
+          portfolioId: portfolioId,    
+          name,
+          ticker,
+          amount: Number(amount),
+          average: Number(price),
+        }
+      });
+    }
+    const transaction = await tx.transaction.create({
+      data: {  
+        price: transactionType === "long" ? Number(price) : Number(-price),
+        units: Number(asset?.amount),
+        type: assetType,
+        stockAssetId: assetType === "stock" ? asset?.id : null,
+        cryptoAssetId: assetType === "crypto" ? asset?.id : null,
+      }
+    });
+    return asset; 
+  })
+}
+
 export async function PUT(req: Request) {
   try {
     const { id, assetType, transactionType, name, ticker, index, amount, price, portfolioId } = (await req.json()) as {
@@ -43,17 +90,7 @@ export async function PUT(req: Request) {
         await createTransaction(stock, assetType, transactionType, price );
         return NextResponse.json(stock);
       } else if (data === null) {
-        const stock = await prisma.stockAsset.create({
-          data: {
-            portfolioId: portfolioId,    
-            name,
-            ticker,
-            index,
-            amount: Number(amount),
-            average: Number(price),
-          },
-        });
-        await createTransaction(stock, assetType, transactionType, price );
+        const stock = await createAsset(portfolioId, name, ticker, index, amount, price, transactionType, assetType );
         return NextResponse.json(stock);
       }
 
@@ -82,16 +119,7 @@ export async function PUT(req: Request) {
         await createTransaction(crypto, assetType, transactionType, price );
         return NextResponse.json(crypto);
       } else if (data === null) {
-        crypto = await prisma.cryptoAsset.create({
-          data: {
-            portfolioId: portfolioId,    
-            name,
-            ticker,
-            amount: Number(amount),
-            average: Number(price),
-          },
-        });
-        await createTransaction(crypto, assetType, transactionType, price );
+        const crypto = await createAsset(portfolioId, name, ticker, index, amount, price, transactionType, assetType );
         return NextResponse.json(crypto);
       }
     } else {
