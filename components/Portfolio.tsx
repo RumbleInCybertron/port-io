@@ -20,7 +20,7 @@ export const GetPortfolio = (portfolio: PortfolioProps) => {
   return (
     <>
       <Navbar />
-      <div>
+      <div className="m-4 text-yellow-600">
         Portfolio
         <div>{portfolio.name}
           <div>Stocks</div>
