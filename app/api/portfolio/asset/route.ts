@@ -1,11 +1,14 @@
+import { CryptoAsset } from "@/components/portfolio/Asset";
 import { prisma } from "@/lib/prisma";
+import { createTransaction } from "@/utils/createTransaction";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PUT(req: Request) {
   try {
-    const { id, type, name, ticker, index, amount, price, portfolioId } = (await req.json()) as {
+    const { id, assetType, transactionType, name, ticker, index, amount, price, portfolioId } = (await req.json()) as {
       id: string;
-      type: string;
+      assetType: string;
+      transactionType: string,
       name: string;
       ticker: string;
       index: string;
@@ -14,7 +17,7 @@ export async function PUT(req: Request) {
       portfolioId: string;
     };
 
-    if(type === "stock") {
+    if(assetType === "stock") {
       const data = await prisma.stockAsset.findFirst({
         where: {
           AND: [{ name: { equals: String(name)}}, {portfolioId: {equals: String(portfolioId)}}]
@@ -37,6 +40,7 @@ export async function PUT(req: Request) {
             average: Number(average),
           },
         });
+        await createTransaction(stock, assetType, transactionType, price );
         return NextResponse.json(stock);
       } else if (data === null) {
         const stock = await prisma.stockAsset.create({
@@ -49,10 +53,12 @@ export async function PUT(req: Request) {
             average: Number(price),
           },
         });
+        await createTransaction(stock, assetType, transactionType, price );
         return NextResponse.json(stock);
       }
 
-    } else if (type === "crypto") {
+    } else if (assetType === "crypto") {
+      let crypto;
       const data = await prisma.cryptoAsset.findFirst({
         where: {
           AND: [{ name: { equals: String(name)}}, {portfolioId: {equals: String(portfolioId)}}]
@@ -63,7 +69,7 @@ export async function PUT(req: Request) {
       if (data !== null && data.average > 0.00 && data.amount > 0){
         const ttl_amt = data.amount + Number(amount);
         const average = ((data.average * data.amount) + (Number(price) * Number(amount))) / ttl_amt;
-        const crypto = await prisma.cryptoAsset.update({
+        crypto = await prisma.cryptoAsset.update({
           where: {id: data.id},
           data: {
             portfolioId,    
@@ -73,9 +79,10 @@ export async function PUT(req: Request) {
             average: Number(average),
           },
         });
+        await createTransaction(crypto, assetType, transactionType, price );
         return NextResponse.json(crypto);
       } else if (data === null) {
-        const stock = await prisma.cryptoAsset.create({
+        crypto = await prisma.cryptoAsset.create({
           data: {
             portfolioId: portfolioId,    
             name,
@@ -84,7 +91,8 @@ export async function PUT(req: Request) {
             average: Number(price),
           },
         });
-        return NextResponse.json(stock);
+        await createTransaction(crypto, assetType, transactionType, price );
+        return NextResponse.json(crypto);
       }
     } else {
       // TODO: throw type error
