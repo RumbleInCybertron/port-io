@@ -63,13 +63,10 @@ model StockAsset {
 
 model Transaction {
   id            String       @id @default(cuid())
-  ticker        String
   price         Float
   units         Float
   type          String
   createdAt     DateTime     @default(now()) @map(name: "created_at")
-  user          User?        @relation(fields: [userId], references: [id])
-  userId        String?
   CryptoAsset   CryptoAsset? @relation(fields: [cryptoAssetId], references: [id])
   cryptoAssetId String?
   StockAsset    StockAsset?  @relation(fields: [stockAssetId], references: [id])
@@ -118,7 +115,6 @@ model User {
   image         String?
   createdAt     DateTime      @default(now()) @map(name: "created_at")
   updatedAt     DateTime      @updatedAt @map(name: "updated_at")
-  transactions  Transaction[]
   accounts      Account[]
   sessions      Session[]
   portfolios    Portfolio[]
