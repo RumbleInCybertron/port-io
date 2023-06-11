@@ -1,61 +1,115 @@
 import { CryptoAsset } from "@/components/portfolio/Asset";
 import { prisma } from "@/lib/prisma";
-import { createTransaction } from "@/utils/createTransaction";
 import { NextRequest, NextResponse } from "next/server";
 
 async function createAsset(
-    portfolioId: string, 
-    name: string, 
-    ticker: string, 
-    index: string,
-    amount: number,
-    price: number,
-    transactionType: string,
-    assetType: string,
-  ){
-  return await prisma.$transaction(async (tx)=>{
+  portfolioId: string,
+  name: string,
+  ticker: string,
+  index: string,
+  amount: number,
+  price: number,
+  transactionType: string,
+  assetType: string
+) {
+  return await prisma.$transaction(async (tx) => {
     let asset;
-    if (assetType === "stock"){
+    if (assetType === "stock") {
       asset = await tx.stockAsset.create({
         data: {
-          portfolioId: portfolioId,    
+          portfolioId: portfolioId,
           name,
           ticker,
           index,
           amount: Number(amount),
           average: Number(price),
-        }
+        },
       });
     } else if (assetType === "crypto") {
       asset = await tx.cryptoAsset.create({
         data: {
-          portfolioId: portfolioId,    
+          portfolioId: portfolioId,
           name,
           ticker,
           amount: Number(amount),
           average: Number(price),
-        }
+        },
       });
     }
     const transaction = await tx.transaction.create({
-      data: {  
+      data: {
         price: transactionType === "long" ? Number(price) : Number(-price),
         units: Number(asset?.amount),
         type: assetType,
         stockAssetId: assetType === "stock" ? asset?.id : null,
         cryptoAssetId: assetType === "crypto" ? asset?.id : null,
-      }
+      },
     });
-    return asset; 
-  })
+    return asset;
+  });
+}
+
+async function updateAsset(
+  id: string,
+  portfolioId: string,
+  amount: number,
+  ttl_amt: number,
+  price: number,
+  average: number,
+  transactionType: string,
+  assetType: string
+) {
+  return await prisma.$transaction(async (tx) => {
+    let asset;
+    if (assetType === "stock") {
+      asset = await tx.stockAsset.update({
+        where: { id: id },
+        data: {
+          portfolioId: portfolioId,
+          amount: Number(ttl_amt),
+          average: Number(average),
+        },
+      });
+      console.log("Asset from update method: ", asset);
+    } else if (assetType === "crypto") {
+      asset = await tx.cryptoAsset.update({
+        where: { id: id },
+        data: {
+          portfolioId: portfolioId,
+          amount: Number(ttl_amt),
+          average: Number(average),
+        },
+      });
+    }
+    console.log("ID passed to update function: ", id);
+    const transaction = await tx.transaction.create({
+      data: {
+        price: transactionType === "long" ? Number(price) : Number(-price),
+        units: Number(amount),
+        type: assetType,
+        stockAssetId: assetType === "stock" ? String(id) : null,
+        cryptoAssetId: assetType === "crypto" ? String(id) : null,
+      },
+    });
+    console.log("Transaction from update method: ", transaction);
+    return asset;
+  });
 }
 
 export async function PUT(req: Request) {
   try {
-    const { id, assetType, transactionType, name, ticker, index, amount, price, portfolioId } = (await req.json()) as {
-      id: string;
+    const {
+      assetType,
+      transactionType,
+      name,
+      ticker,
+      index,
+      amount,
+      price,
+      portfolioId,
+    } = (await req.json()) as {
       assetType: string;
-      transactionType: string,
+      transactionType: string;
       name: string;
       ticker: string;
       index: string;
@@ -64,62 +118,94 @@ export async function PUT(req: Request) {
       portfolioId: string;
     };
 
-    if(assetType === "stock") {
+    if (assetType === "stock") {
       const data = await prisma.stockAsset.findFirst({
         where: {
-          AND: [{ name: { equals: String(name)}}, {portfolioId: {equals: String(portfolioId)}}]
+          AND: [
+            { name: { equals: String(name) } },
+            { portfolioId: { equals: String(portfolioId) } },
+          ],
         },
-        select: {id: true, amount: true, average: true}
+        select: { id: true, amount: true, average: true },
       });
 
-      if (data !== null && data.average > 0.00 && data.amount > 0){
+      console.log("Data from stockAsset: ", data);
+      console.log("Portfolio ID from request: ", portfolioId);
+      console.log("Trans type: ", transactionType);
+      console.log("ID from data: ", data?.id);
+
+      if (data !== null && data.average > 0.0 && data.amount > 0) {
         const ttl_amt = data.amount + Number(amount);
         console.log("Total Amount: ", ttl_amt);
-        const average = ((data.average * data.amount) + (Number(price) * Number(amount))) / ttl_amt;
-        const stock = await prisma.stockAsset.update({
-          where: {id: id},
-          data: {
-            portfolioId,    
-            name,
-            ticker,
-            index,
-            amount: ttl_amt,
-            average: Number(average),
-          },
-        });
-        await createTransaction(stock, assetType, transactionType, price );
+        const average =
+          transactionType === "long"
+            ? (data.average * data.amount + Number(price) * Number(amount)) /
+              ttl_amt
+            : data.average;
+        const stock = await updateAsset(
+          data.id,
+          portfolioId,
+          amount,
+          ttl_amt,
+          price,
+          average,
+          transactionType,
+          assetType
+        );
         return NextResponse.json(stock);
       } else if (data === null) {
-        const stock = await createAsset(portfolioId, name, ticker, index, amount, price, transactionType, assetType );
+        const stock = await createAsset(
+          portfolioId,
+          name,
+          ticker,
+          index,
+          amount,
+          price,
+          transactionType,
+          assetType
+        );
         return NextResponse.json(stock);
       }
-
     } else if (assetType === "crypto") {
-      let crypto;
       const data = await prisma.cryptoAsset.findFirst({
         where: {
-          AND: [{ name: { equals: String(name)}}, {portfolioId: {equals: String(portfolioId)}}]
+          AND: [
+            { name: { equals: String(name) } },
+            { portfolioId: { equals: String(portfolioId) } },
+          ],
         },
-        select: {id: true, amount: true, average: true}
+        select: { id: true, amount: true, average: true },
       });
 
-      if (data !== null && data.average > 0.00 && data.amount > 0){
+      if (data !== null && data.average > 0.0 && data.amount > 0) {
         const ttl_amt = data.amount + Number(amount);
-        const average = ((data.average * data.amount) + (Number(price) * Number(amount))) / ttl_amt;
-        crypto = await prisma.cryptoAsset.update({
-          where: {id: data.id},
-          data: {
-            portfolioId,    
-            name,
-            ticker,
-            amount: ttl_amt,
-            average: Number(average),
-          },
-        });
-        await createTransaction(crypto, assetType, transactionType, price );
+        const average =
+          transactionType === "long"
+            ? (data.average * data.amount + Number(price) * Number(amount)) /
+              ttl_amt
+            : data.average;
+        const crypto = await updateAsset(
+          data.id,
+          portfolioId,
+          amount,
+          ttl_amt,
+          price,
+          average,
+          transactionType,
+          assetType
+        );
         return NextResponse.json(crypto);
       } else if (data === null) {
-        const crypto = await createAsset(portfolioId, name, ticker, index, amount, price, transactionType, assetType );
+        const crypto = await createAsset(
+          portfolioId,
+          name,
+          ticker,
+          index,
+          amount,
+          price,
+          transactionType,
+          assetType
+        );
         return NextResponse.json(crypto);
       }
     } else {
@@ -174,7 +260,7 @@ export async function PUT(req: Request) {
 //     });
 
 //     // TODO: validate stocks&cryptos against user id
- 
+
 //     return NextResponse.json({
 //         assets: {
 //           stocks,
