@@ -15,6 +15,7 @@ model Portfolio {
   userId       String
   stockAssets  StockAsset[]
   cryptoAssets CryptoAsset[]
+  Fiat         Fiat?
 }
 
 model Crypto {
@@ -45,6 +46,8 @@ model CryptoAsset {
   updatedAt    DateTime      @updatedAt
   portfolio    Portfolio     @relation(fields: [portfolioId], references: [id])
   portfolioId  String
+  profits      Profit[]
+  losses       Loss[]
 }
 
 model StockAsset {
@@ -59,6 +62,8 @@ model StockAsset {
   updatedAt    DateTime      @updatedAt
   portfolio    Portfolio     @relation(fields: [portfolioId], references: [id])
   portfolioId  String
+  profits      Profit[]
+  losses       Loss[]
 }
 
 model Transaction {
@@ -71,6 +76,33 @@ model Transaction {
   cryptoAssetId String?
   StockAsset    StockAsset?  @relation(fields: [stockAssetId], references: [id])
   stockAssetId  String?
+}
+
+model Profit {
+  id            String       @id @default(cuid())
+  amount        Float
+  createdAt     DateTime     @default(now()) @map(name: "created_at")
+  CryptoAsset   CryptoAsset? @relation(fields: [cryptoAssetId], references: [id])
+  cryptoAssetId String?
+  StockAsset    StockAsset?  @relation(fields: [stockAssetId], references: [id])
+  stockAssetId  String?
+}
+
+model Loss {
+  id            String       @id @default(cuid())
+  amount        Float
+  createdAt     DateTime     @default(now()) @map(name: "created_at")
+  CryptoAsset   CryptoAsset? @relation(fields: [cryptoAssetId], references: [id])
+  cryptoAssetId String?
+  StockAsset    StockAsset?  @relation(fields: [stockAssetId], references: [id])
+  stockAssetId  String?
+}
+
+model Fiat {
+  id          String    @id @default(cuid())
+  amount      Float
+  portfolio   Portfolio @relation(fields: [portfolioId], references: [id])
+  portfolioId String    @unique
 }
 
 enum Role {
