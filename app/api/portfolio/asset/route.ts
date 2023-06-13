@@ -36,13 +36,19 @@ async function createAsset(
         },
       });
     }
-    const transaction = await tx.transaction.create({
+    await tx.transaction.create({
       data: {
         price: transactionType === "long" ? Number(price) : Number(-price),
         units: Number(asset?.amount),
         type: assetType,
         stockAssetId: assetType === "stock" ? asset?.id : null,
         cryptoAssetId: assetType === "crypto" ? asset?.id : null,
+      },
+    });
+    await tx.fiat.create({
+      data: {
+        amount: 0,
+        portfolioId: String(portfolioId),
       },
     });
     return asset;
@@ -55,11 +61,13 @@ async function updateAsset(
   amount: number,
   ttl_amt: number,
   price: number,
+  profit: number | null,
   average: number,
   transactionType: string,
   assetType: string
 ) {
   return await prisma.$transaction(async (tx) => {
+    let pl;
     let asset;
     if (assetType === "stock") {
       asset = await tx.stockAsset.update({
@@ -70,6 +78,21 @@ async function updateAsset(
           average: Number(average),
         },
       });
+      if (profit !== null) {
+        profit >= 0
+          ? (pl = await tx.profit.create({
+              data: {
+                amount: profit,
+                stockAssetId: id,
+              },
+            }))
+          : await tx.loss.create({
+              data: {
+                amount: profit,
+                stockAssetId: id,
+              },
+            });
+      }
       console.log("Asset from update method: ", asset);
     } else if (assetType === "crypto") {
       asset = await tx.cryptoAsset.update({
@@ -80,6 +103,21 @@ async function updateAsset(
           average: Number(average),
         },
       });
+      if (profit !== null) {
+        profit >= 0
+          ? (pl = await tx.profit.create({
+              data: {
+                amount: profit,
+                cryptoAssetId: id,
+              },
+            }))
+          : await tx.loss.create({
+              data: {
+                amount: profit,
+                cryptoAssetId: id,
+              },
+            });
+      }
     }
     console.log("ID passed to update function: ", id);
     const transaction = await tx.transaction.create({
@@ -135,19 +173,34 @@ export async function PUT(req: Request) {
       console.log("ID from data: ", data?.id);
 
       if (data !== null && data.average > 0.0 && data.amount > 0) {
-        const ttl_amt = data.amount + Number(amount);
+        const ttl_amt =
+          transactionType === "long"
+            ? data.amount + Number(amount)
+            : data.amount - Number(amount);
         console.log("Total Amount: ", ttl_amt);
         const average =
           transactionType === "long"
             ? (data.average * data.amount + Number(price) * Number(amount)) /
               ttl_amt
             : data.average;
+        const profit =
+          transactionType === "short"
+            ? price * Number(amount) - average * Number(amount)
+            : null;
+        console.log("Profit: ", profit);
+        if (transactionType === "short")
+          await prisma.$executeRaw`
+            UPDATE "Fiat" 
+            SET "amount" = "amount" + ${Number(amount) * Number(price)}
+            WHERE "portfolioId" = ${String(portfolioId)};`
+
         const stock = await updateAsset(
           data.id,
           portfolioId,
           amount,
           ttl_amt,
           price,
+          profit,
           average,
           transactionType,
           assetType
@@ -184,12 +237,17 @@ export async function PUT(req: Request) {
             ? (data.average * data.amount + Number(price) * Number(amount)) /
               ttl_amt
             : data.average;
+        const profit =
+          transactionType === "short"
+            ? price * amount - average * amount
+            : null;
         const crypto = await updateAsset(
           data.id,
           portfolioId,
           amount,
           ttl_amt,
           price,
+          profit,
           average,
           transactionType,
           assetType
