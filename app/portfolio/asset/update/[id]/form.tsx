@@ -1,7 +1,7 @@
 "use client";
 
 import '@/app/styles/globals.css';
-import { ChangeEvent, Key, useState } from "react";
+import { ChangeEvent, Key,useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Dropdown } from "@nextui-org/react";
 import Navbar from '@/components/Navbar';
@@ -59,38 +59,33 @@ export const AssetForm = (portfolio: Portfolio) => {
     const body = { ...stockFormValues, transactionType };
     console.log("Body: ", body)
 
-    try {
-      const res = await fetch("/api/portfolio/asset", {
-        method: "PUT",
-        body: JSON.stringify(body),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+    const res = await fetch("/api/portfolio/asset", {
+      method: "PUT",
+      body: JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
-      if (!res.ok) {
-        setError((await res.json()).message);
-        return;
-      }
-
-      router.push(callbackUrl);
-
-    } catch (error: any) {
-      setError(error);
+    if (!res.ok) {
+      setError((await res.json()).message);
+      return;
     }
+
+    router.push(callbackUrl);
   };
 
   const onCryptoSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setCryptoFormValues({ 
-      portfolioId: portfolio.id, 
-      name: "", 
-      ticker: "", 
-      amount: 0, 
-      price: 0, 
+    setCryptoFormValues({
+      portfolioId: portfolio.id,
+      name: "",
+      ticker: "",
+      amount: 0,
+      price: 0,
       assetType: "crypto",
-     });
-     const body = { ...cryptoFormValues, transactionType };
+    });
+    const body = { ...cryptoFormValues, transactionType };
     console.log("Body: ", body);
 
     try {
@@ -164,7 +159,11 @@ export const AssetForm = (portfolio: Portfolio) => {
               {
                 assetType === "stock"
                   ?
-                  <form onSubmit={onStockSubmit}>
+                  <form
+                   onSubmit={onStockSubmit}
+                                    //  action="/api/portfolio/asset"
+                                    //  method="put"
+                   >
                     {error && (
                       <p className="text-center bg-red-300 py-4 mb-6 rounded">{error}</p>
                     )}
@@ -245,7 +244,7 @@ export const AssetForm = (portfolio: Portfolio) => {
                   :
                   <form
                     onSubmit={onCryptoSubmit}
-                    // action="/api/portfolio/asset"
+                  // action="/api/portfolio/asset"
                   >
                     {error && (
                       <p className="text-center bg-red-300 py-4 mb-6 rounded">{error}</p>
