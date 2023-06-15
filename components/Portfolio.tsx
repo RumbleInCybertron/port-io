@@ -6,10 +6,12 @@ import { useRouter } from "next/navigation";
 import ReactMarkdown from 'react-markdown';
 import { CryptoAsset, CryptoAssetProps, StockAsset, StockAssetProps } from './portfolio/Asset';
 import Navbar from '@/components/Navbar';
+import { FiatProps } from '@/components/Fiat';
 
 export type PortfolioProps = {
   id: string;
   name: string;
+  Fiat: FiatProps | null;
   stockAssets?: StockAssetProps[];
   cryptoAssets?: CryptoAssetProps[];
 };
@@ -23,6 +25,7 @@ export const GetPortfolio = (portfolio: PortfolioProps) => {
       <div className="m-4 text-yellow-600">
         Portfolio
         <div>{portfolio.name}
+        <div>Fiat: ${portfolio.Fiat?.amount}</div>
           <div>Stocks</div>
           {
             portfolio.stockAssets !== undefined && portfolio.stockAssets.length >= 1
