@@ -6,6 +6,7 @@ export default async function UpdateAssetPage({ params }: { params: { id: string
     where: { id: String(params.id) },
     select: {
       id: true,
+      Fiat: { select: { amount: true}},
     }
   });
 
