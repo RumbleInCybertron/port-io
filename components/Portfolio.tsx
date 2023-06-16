@@ -8,6 +8,7 @@ import { CryptoAsset, CryptoAssetProps, StockAsset, StockAssetProps } from './po
 import Navbar from '@/components/Navbar';
 import { FiatProps } from '@/components/Fiat';
 import { Profit, ProfitProps } from '@/components/Profit';
+import { Loss, LossProps } from '@/components/Loss';
 
 export type PortfolioProps = {
   id: string;
@@ -18,10 +19,11 @@ export type PortfolioProps = {
   cryptoAssets?: CryptoAssetProps[];
 };
 
-export const GetPortfolio = (props: { portfolio: PortfolioProps, profits: ProfitProps[] }) => {
+export const GetPortfolio = (props: { portfolio: PortfolioProps, profits: ProfitProps[], losses: LossProps[] }) => {
   const router = useRouter();
   const uri = "/portfolio/asset/update/" + props.portfolio.id
   console.log("Profits: ", props.profits);
+  console.log("Losses: ", props.losses);
   return (
     <>
       <Navbar />
@@ -37,7 +39,23 @@ export const GetPortfolio = (props: { portfolio: PortfolioProps, profits: Profit
                   </div>
                 )))
               : (
-                <div className="mx-1">No Profits yet!</div>
+                <div className="text-inherit p-2">
+                  <div className="mx-1">No Profits yet!</div>
+                </div>
+              )}
+          </div>
+          <div>Total Losses{
+            props.losses !== undefined && props.losses.length > 0
+              ? (
+                props.losses.map((loss: LossProps, i) => (
+                  <div key={i}>
+                    <Loss {...loss} />
+                  </div>
+                )))
+              : (
+                <div className="text-inherit p-2">
+                  <small className="mx-1">No Losses yet!</small>
+                </div>
               )}
           </div>
           <div>Total Value: ${props.portfolio.ttl_value}</div>
