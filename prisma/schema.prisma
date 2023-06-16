@@ -10,6 +10,7 @@ generator client {
 model Portfolio {
   id           String        @id @default(cuid())
   name         String
+  ttl_value    Float
   createdAt    DateTime      @default(now()) @map(name: "created_at")
   user         User          @relation(fields: [userId], references: [id])
   userId       String
