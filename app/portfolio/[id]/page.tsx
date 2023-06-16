@@ -15,13 +15,16 @@ export default async function PortfolioPage({ params }: { params: { id: string }
   });
 
   const stockAssetIds = portfolio.stockAssets.map(e => e.id);
+  console.log("Stock IDs from DB: ", stockAssetIds);
   const cryptoAssetIds = portfolio.cryptoAssets.map(e => e.id);
+  console.log("Crypto IDs from DB: ", cryptoAssetIds);
   const profits = await prisma.profit.findMany({
-    where: { OR: [{ stockAssetId: { in: stockAssetIds }, cryptoAssetId: { in: cryptoAssetIds } }] },
-    select: {id: true, amount: true, stockAssetId: true, cryptoAssetId: true}
+    where: { OR: [{ stockAssetId: { in: stockAssetIds } }, { cryptoAssetId: { in: cryptoAssetIds } }] }
   });
 
-  const props = {portfolio, profits};
+  console.log("Profits from DB: ", profits);
+
+  const props = { portfolio, profits };
 
   console.log("Portfolio w/ ID param: ", portfolio);
   return (

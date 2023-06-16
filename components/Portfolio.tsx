@@ -21,13 +21,14 @@ export type PortfolioProps = {
 export const GetPortfolio = (props: { portfolio: PortfolioProps, profits: ProfitProps[] }) => {
   const router = useRouter();
   const uri = "/portfolio/asset/update/" + props.portfolio.id
+  console.log("Profits: ", props.profits);
   return (
     <>
       <Navbar />
       <div className="m-4 text-yellow-600">
         Portfolio
         <div>{props.portfolio.name}
-          <div className="flex">Profits:{
+          <div>Total Profits{
             props.profits !== undefined && props.profits.length > 0
               ? (
                 props.profits.map((profit: ProfitProps, i) => (
