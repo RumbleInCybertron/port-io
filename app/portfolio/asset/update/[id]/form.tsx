@@ -72,7 +72,7 @@ export const AssetForm = (portfolio: Portfolio) => {
       return;
     }
 
-    router.push(callbackUrl);
+    await router.push(callbackUrl);
   };
 
   const onCryptoSubmit = async (e: React.FormEvent) => {
@@ -102,7 +102,7 @@ export const AssetForm = (portfolio: Portfolio) => {
         return;
       }
 
-      router.push(callbackUrl);
+      await router.push(callbackUrl);
 
     } catch (error: any) {
       setError(error);
