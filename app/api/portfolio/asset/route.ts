@@ -45,12 +45,12 @@ async function createAsset(
         cryptoAssetId: assetType === "crypto" ? asset?.id : null,
       },
     });
-    await tx.fiat.create({
-      data: {
-        amount: 0,
-        portfolioId: String(portfolioId),
-      },
-    });
+
+    // update portfolio's total value
+    await prisma.$executeRaw`
+    UPDATE "Portfolio" 
+    SET "ttl_value" = "ttl_value" + ${Number(amount) * Number(price)}
+    WHERE "id" = ${String(portfolioId)};`;
     return asset;
   });
 }
@@ -67,7 +67,6 @@ async function updateAsset(
   assetType: string
 ) {
   return await prisma.$transaction(async (tx) => {
-    let pl;
     let asset;
     if (assetType === "stock") {
       asset = await tx.stockAsset.update({
@@ -80,12 +79,12 @@ async function updateAsset(
       });
       if (profit !== null) {
         profit >= 0
-          ? (pl = await tx.profit.create({
+          ? await tx.profit.create({
               data: {
                 amount: profit,
                 stockAssetId: id,
               },
-            }))
+            })
           : await tx.loss.create({
               data: {
                 amount: profit,
@@ -93,7 +92,7 @@ async function updateAsset(
               },
             });
       }
-      console.log("Asset from update method: ", asset);
+      console.log("%cAsset from update method: ", "color:yellow", asset);
     } else if (assetType === "crypto") {
       asset = await tx.cryptoAsset.update({
         where: { id: id },
@@ -105,12 +104,12 @@ async function updateAsset(
       });
       if (profit !== null) {
         profit >= 0
-          ? (pl = await tx.profit.create({
+          ? await tx.profit.create({
               data: {
                 amount: profit,
                 cryptoAssetId: id,
               },
-            }))
+            })
           : await tx.loss.create({
               data: {
                 amount: profit,
@@ -130,6 +129,13 @@ async function updateAsset(
       },
     });
     console.log("Transaction from update method: ", transaction);
+
+    // update portfolio's total value
+    await prisma.$executeRaw`
+    UPDATE "Portfolio" 
+    SET "ttl_value" = "ttl_value" + ${profit}
+    WHERE "id" = ${String(portfolioId)};`;
+
     return asset;
   });
 }
@@ -188,11 +194,12 @@ export async function PUT(req: Request) {
             ? price * Number(amount) - average * Number(amount)
             : null;
         console.log("Profit: ", profit);
+        // TODO: maybe add to transaction as fail-safe
         if (transactionType === "short")
           await prisma.$executeRaw`
             UPDATE "Fiat" 
             SET "amount" = "amount" + ${Number(amount) * Number(price)}
-            WHERE "portfolioId" = ${String(portfolioId)};`
+            WHERE "portfolioId" = ${String(portfolioId)};`;
 
         const stock = await updateAsset(
           data.id,
