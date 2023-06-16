@@ -22,9 +22,14 @@ export default async function PortfolioPage({ params }: { params: { id: string }
     where: { OR: [{ stockAssetId: { in: stockAssetIds } }, { cryptoAssetId: { in: cryptoAssetIds } }] }
   });
 
-  console.log("Profits from DB: ", profits);
+  const losses = await prisma.loss.findMany({
+    where: { OR: [{ stockAssetId: { in: stockAssetIds } }, { cryptoAssetId: { in: cryptoAssetIds } }] }
+  });
 
-  const props = { portfolio, profits };
+  console.log("Profits from DB: ", profits);
+  console.log("Losses from DB: ", losses);
+
+  const props = { portfolio, profits, losses };
 
   console.log("Portfolio w/ ID param: ", portfolio);
   return (
