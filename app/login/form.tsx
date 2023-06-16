@@ -34,7 +34,7 @@ export const LoginForm = () => {
 
       console.log(res);
       if (!res?.error) {
-        router.push(callbackUrl);
+        await router.push(callbackUrl);
       } else {
         setError("invalid email or password");
       }
