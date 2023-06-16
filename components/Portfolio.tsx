@@ -7,30 +7,45 @@ import ReactMarkdown from 'react-markdown';
 import { CryptoAsset, CryptoAssetProps, StockAsset, StockAssetProps } from './portfolio/Asset';
 import Navbar from '@/components/Navbar';
 import { FiatProps } from '@/components/Fiat';
+import { Profit, ProfitProps } from '@/components/Profit';
 
 export type PortfolioProps = {
   id: string;
   name: string;
+  ttl_value: number;
   Fiat: FiatProps | null;
   stockAssets?: StockAssetProps[];
   cryptoAssets?: CryptoAssetProps[];
 };
 
-export const GetPortfolio = (portfolio: PortfolioProps) => {
+export const GetPortfolio = (props: { portfolio: PortfolioProps, profits: ProfitProps[] }) => {
   const router = useRouter();
-  const uri = "/portfolio/asset/update/" + portfolio.id
+  const uri = "/portfolio/asset/update/" + props.portfolio.id
   return (
     <>
       <Navbar />
       <div className="m-4 text-yellow-600">
         Portfolio
-        <div>{portfolio.name}
-        <div>Fiat: ${portfolio.Fiat?.amount}</div>
+        <div>{props.portfolio.name}
+          <div className="flex">Profits:{
+            props.profits !== undefined && props.profits.length > 0
+              ? (
+                props.profits.map((profit: ProfitProps, i) => (
+                  <div key={i}>
+                    <Profit {...profit} />
+                  </div>
+                )))
+              : (
+                <div className="mx-1">No Profits yet!</div>
+              )}
+          </div>
+          <div>Total Value: ${props.portfolio.ttl_value}</div>
+          <div>Fiat: ${props.portfolio.Fiat?.amount}</div>
           <div>Stocks</div>
           {
-            portfolio.stockAssets !== undefined && portfolio.stockAssets.length >= 1
+            props.portfolio.stockAssets !== undefined && props.portfolio.stockAssets.length >= 1
               ? (
-                portfolio.stockAssets?.map((stockAsset: StockAssetProps, i) => (
+                props.portfolio.stockAssets?.map((stockAsset: StockAssetProps, i) => (
                   <div key={i}>
                     <StockAsset {...stockAsset} />
                   </div>
@@ -40,9 +55,9 @@ export const GetPortfolio = (portfolio: PortfolioProps) => {
               )}
           <div>Crypto</div>
           {
-            portfolio.cryptoAssets !== undefined && portfolio.cryptoAssets.length >= 1
+            props.portfolio.cryptoAssets !== undefined && props.portfolio.cryptoAssets.length >= 1
               ? (
-                portfolio.cryptoAssets?.map((cryptoAsset: CryptoAssetProps, i) => (
+                props.portfolio.cryptoAssets?.map((cryptoAsset: CryptoAssetProps, i) => (
                   <div key={i}>
                     <CryptoAsset {...cryptoAsset} />
                   </div>
@@ -52,7 +67,7 @@ export const GetPortfolio = (portfolio: PortfolioProps) => {
               )}
           <button className="m-2 w-1/3" onClick={() => router.push(uri)}>+ Add/Update Asset</button>
         </div>
-        {/* <StockAsset id={portfolio.id} name={portfolio.name} ticker={portfolio.ticker} amount={portfolio.amount} average={portfolio.average} updatedAt={portfolio.updatedAt} /> */}
+        {/* <StockAsset id={props.portfolio.id} name={props.portfolio.name} ticker={props.portfolio.ticker} amount={props.portfolio.amount} average={props.portfolio.average} updatedAt={props.portfolio.updatedAt} /> */}
       </div>
     </>
   )
@@ -72,7 +87,7 @@ export const GetPortfolio = (portfolio: PortfolioProps) => {
       </div> */}
 }
 
-export const GetPortfolios = ({portfolios}: {portfolios: PortfolioProps[]}) => {
+export const GetPortfolios = ({ portfolios }: { portfolios: PortfolioProps[] }) => {
   const router = useRouter();
   return (
     <>
