@@ -27,7 +27,7 @@ export const GetPortfolio = (props: { portfolio: PortfolioProps, profits: Profit
   return (
     <>
       <Navbar />
-      <div className="m-4 text-yellow-600">
+      <div className="m-4 container text-yellow-600">
         Portfolio
         <div>{props.portfolio.name}
           <div>Total Profits{
@@ -54,7 +54,7 @@ export const GetPortfolio = (props: { portfolio: PortfolioProps, profits: Profit
                 )))
               : (
                 <div className="text-inherit p-2">
-                  <small className="mx-1">No Losses yet!</small>
+                  <div className="mx-1">No Losses yet!</div>
                 </div>
               )}
           </div>
