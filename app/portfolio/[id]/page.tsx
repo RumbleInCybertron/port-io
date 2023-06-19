@@ -26,7 +26,6 @@ export default async function PortfolioPage({ params }: { params: { id: string }
     where: { OR: [{ stockAssetId: { in: stockAssetIds } }, { cryptoAssetId: { in: cryptoAssetIds } }] }
   });
 
-  console.log("Profits from DB: ", profits);
   console.log("Losses from DB: ", losses);
 
   const props = { portfolio, profits, losses };
