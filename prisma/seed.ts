@@ -15,6 +15,84 @@ async function main() {
     },
   });
   console.log({ user });
+
+  const portfolio1 = await prisma.portfolio.create({
+    data: { name: "Test Portfolio #1", ttl_value: 0, userId: String(user.id) },
+  });
+  console.log({ portfolio1 });
+  
+  const portfolio2 = await prisma.portfolio.create({
+    data: { name: "Test Portfolio #2", ttl_value: 0, userId: String(user.id) },
+  });
+  console.log({ portfolio2 });
+
+  const portfolio3 = await prisma.portfolio.create({
+    data: { name: "Test Portfolio #3", ttl_value: 0, userId: String(user.id) },
+  });
+  console.log({ portfolio3 });
+
+  const stockAsset1 = await prisma.stockAsset.create({
+    data: { 
+      name: "Unity Software Inc",
+      ticker: "U",
+      index: "NYSE",
+      amount: 10,
+      average: 30,
+      portfolioId: String(portfolio1.id)    
+    }
+  });
+  console.log({ stockAsset1 });
+  const transaction1 = await prisma.transaction.create({
+    data: { 
+      price: 30,
+      units: 10,
+      type: "stock",
+      stockAssetId: String(stockAsset1.id)
+    }
+  });
+  console.log({transaction1});
+
+  const stockAsset2 = await prisma.stockAsset.create({
+    data: { 
+      name: "Alibaba Group Holding Ltd - ADR",
+      ticker: "BABA",
+      index: "NYSE",
+      amount: 5,
+      average: 75,
+      portfolioId: String(portfolio1.id)    
+    }
+  });
+  console.log({ stockAsset2 });
+  const transaction2 = await prisma.transaction.create({
+    data: { 
+      price: 30,
+      units: 10,
+      type: "stock",
+      stockAssetId: String(stockAsset2.id)
+    }
+  });
+  console.log({transaction2});
+
+  const stockAsset3 = await prisma.stockAsset.create({
+    data: { 
+      name: "Advanced Micro Devices, Inc",
+      ticker: "AMD",
+      index: "NASDAQ",
+      amount: 10,
+      average: 80,
+      portfolioId: String(portfolio1.id)    
+    }
+  });
+  console.log({ stockAsset3 });
+  const transaction3 = await prisma.transaction.create({
+    data: { 
+      price: 30,
+      units: 10,
+      type: "stock",
+      stockAssetId: String(stockAsset3.id)
+    }
+  });
+  console.log({transaction3});
 }
 main()
   .then(() => prisma.$disconnect())
