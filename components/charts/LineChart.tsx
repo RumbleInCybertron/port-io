@@ -51,7 +51,7 @@ export function LineChart(data: DataProps) {
         display: false,
         maxTicksLimit: 30,
       },
-      yAxis: {
+      y: {
         display: true,
         ticks: {
           callback: function (value: any) {
@@ -65,8 +65,10 @@ export function LineChart(data: DataProps) {
   return (
     <>
       {/* line chart */}
-      <div className="w-[150px] mx-auto mt-10 text-2xl">ラインチャート</div>
-      <Line data={data} width={100} height={40} options={options} />
+      <div className="w-1/2">
+      <div className="w-[150px] mx-auto mt-10 text-xl">ラインチャート</div>
+        <Line data={data} width={100} height={40} options={options} />
+      </div>
     </>
   );
 };
