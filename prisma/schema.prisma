@@ -1,22 +1,22 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-}
-
-generator client {
-  provider = "prisma-client-js"
 }
 
 model Portfolio {
   id           String        @id @default(cuid())
   name         String
   ttl_value    Float
-  createdAt    DateTime      @default(now()) @map(name: "created_at")
-  user         User          @relation(fields: [userId], references: [id])
+  createdAt    DateTime      @default(now()) @map("created_at")
   userId       String
-  stockAssets  StockAsset[]
   cryptoAssets CryptoAsset[]
   Fiat         Fiat?
+  user         User          @relation(fields: [userId], references: [id])
+  stockAssets  StockAsset[]
 }
 
 model Crypto {
@@ -24,7 +24,7 @@ model Crypto {
   name      String
   ticker    String
   price     Float
-  createdAt DateTime @default(now()) @map(name: "created_at")
+  createdAt DateTime @default(now()) @map("created_at")
 }
 
 model Stock {
@@ -33,22 +33,22 @@ model Stock {
   ticker    String
   index     String
   price     Float
-  createdAt DateTime @default(now()) @map(name: "created_at")
+  createdAt DateTime @default(now()) @map("created_at")
 }
 
 model CryptoAsset {
   id           String        @id @default(cuid())
   name         String        @unique
   ticker       String
-  transactions Transaction[]
   amount       Float
   average      Float
-  createdAt    DateTime      @default(now()) @map(name: "created_at")
+  createdAt    DateTime      @default(now()) @map("created_at")
   updatedAt    DateTime      @updatedAt
-  portfolio    Portfolio     @relation(fields: [portfolioId], references: [id])
   portfolioId  String
-  profits      Profit[]
+  portfolio    Portfolio     @relation(fields: [portfolioId], references: [id])
   losses       Loss[]
+  profits      Profit[]
+  transactions Transaction[]
 }
 
 model StockAsset {
@@ -56,15 +56,15 @@ model StockAsset {
   name         String        @unique
   ticker       String
   index        String
-  transactions Transaction[]
   amount       Float
   average      Float
-  createdAt    DateTime      @default(now()) @map(name: "created_at")
+  createdAt    DateTime      @default(now()) @map("created_at")
   updatedAt    DateTime      @updatedAt
-  portfolio    Portfolio     @relation(fields: [portfolioId], references: [id])
   portfolioId  String
-  profits      Profit[]
   losses       Loss[]
+  profits      Profit[]
+  portfolio    Portfolio     @relation(fields: [portfolioId], references: [id])
+  transactions Transaction[]
 }
 
 model Transaction {
@@ -72,43 +72,38 @@ model Transaction {
   price         Float
   units         Float
   type          String
-  createdAt     DateTime     @default(now()) @map(name: "created_at")
-  CryptoAsset   CryptoAsset? @relation(fields: [cryptoAssetId], references: [id])
+  createdAt     DateTime     @default(now()) @map("created_at")
   cryptoAssetId String?
-  StockAsset    StockAsset?  @relation(fields: [stockAssetId], references: [id])
   stockAssetId  String?
+  CryptoAsset   CryptoAsset? @relation(fields: [cryptoAssetId], references: [id])
+  StockAsset    StockAsset?  @relation(fields: [stockAssetId], references: [id])
 }
 
 model Profit {
   id            String       @id @default(cuid())
   amount        Float
-  createdAt     DateTime     @default(now()) @map(name: "created_at")
-  CryptoAsset   CryptoAsset? @relation(fields: [cryptoAssetId], references: [id])
+  createdAt     DateTime     @default(now()) @map("created_at")
   cryptoAssetId String?
-  StockAsset    StockAsset?  @relation(fields: [stockAssetId], references: [id])
   stockAssetId  String?
+  CryptoAsset   CryptoAsset? @relation(fields: [cryptoAssetId], references: [id])
+  StockAsset    StockAsset?  @relation(fields: [stockAssetId], references: [id])
 }
 
 model Loss {
   id            String       @id @default(cuid())
   amount        Float
-  createdAt     DateTime     @default(now()) @map(name: "created_at")
-  CryptoAsset   CryptoAsset? @relation(fields: [cryptoAssetId], references: [id])
+  createdAt     DateTime     @default(now()) @map("created_at")
   cryptoAssetId String?
-  StockAsset    StockAsset?  @relation(fields: [stockAssetId], references: [id])
   stockAssetId  String?
+  CryptoAsset   CryptoAsset? @relation(fields: [cryptoAssetId], references: [id])
+  StockAsset    StockAsset?  @relation(fields: [stockAssetId], references: [id])
 }
 
 model Fiat {
   id          String    @id @default(cuid())
   amount      Float
-  portfolio   Portfolio @relation(fields: [portfolioId], references: [id])
   portfolioId String    @unique
-}
-
-enum Role {
-  USER
-  ADMIN
+  portfolio   Portfolio @relation(fields: [portfolioId], references: [id])
 }
 
 model Account {
@@ -126,8 +121,7 @@ model Account {
   session_state      String?
   oauth_token_secret String?
   oauth_token        String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user               User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -146,12 +140,12 @@ model User {
   email         String?     @unique
   password      String
   image         String?
-  createdAt     DateTime    @default(now()) @map(name: "created_at")
-  updatedAt     DateTime    @updatedAt @map(name: "updated_at")
-  accounts      Account[]
-  sessions      Session[]
-  portfolios    Portfolio[]
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @updatedAt @map("updated_at")
   emailVerified DateTime?   @map("email_verified")
+  accounts      Account[]
+  portfolios    Portfolio[]
+  sessions      Session[]
 }
 
 model VerificationToken {
@@ -161,4 +155,9 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+enum Role {
+  USER
+  ADMIN
 }
