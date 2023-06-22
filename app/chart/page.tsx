@@ -1,5 +1,7 @@
 import '@/app/styles/globals.css'
-import { LineChart } from "@/components/charts/LineChart";
+// import { LineChart } from "@/components/charts/LineChart";
+import { LineChart } from "@/components/charts/AssetLineChart";
+import {  DoubleLineChart } from "@/components/charts/DoubleLineChart";
 import { getThirtyDays } from "@/utils/getThirtyDays";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -124,7 +126,9 @@ export default async function LineChartPage() {
   return (
     <>
       <Navbar />
-      <LineChart {...data} />
+      {/* <LineChart {...data} /> */}
+      {/* <DoubleLineChart /> */}
+      <LineChart />
     </>
   )
 }
