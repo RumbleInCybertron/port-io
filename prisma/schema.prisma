@@ -25,6 +25,7 @@ model Crypto {
   ticker    String
   price     Float
   createdAt DateTime @default(now()) @map("created_at")
+  historicalData HistoricalData[]
 }
 
 model Stock {
@@ -34,6 +35,23 @@ model Stock {
   index     String
   price     Float
   createdAt DateTime @default(now()) @map("created_at")
+  last_updated DateTime
+  historicalData HistoricalData[]
+}
+
+model HistoricalData {
+  id String @id @default(cuid())
+  date DateTime
+  close Float
+  volume Float
+  open Float
+  high Float
+  low Float
+  createdAt DateTime @default(now()) @map("created_at")
+  stockId String
+  stock Stock? @relation(fields: [stockId], references: [id])
+  cryptoId String
+  crypto Crypto? @relation(fields: [cryptoId], references: [id])
 }
 
 model CryptoAsset {
