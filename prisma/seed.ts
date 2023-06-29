@@ -1,7 +1,14 @@
 import { PrismaClient } from "@prisma/client";
 import { hash } from "bcryptjs";
+import path from "path";
+import fs, {promises} from "fs";
+import Papa from "papaparse";
 
 const prisma = new PrismaClient();
+
+async function createHistoricalData() {
+  
+}
 
 async function main() {
   const password = await hash("password123", 12);
@@ -93,7 +100,47 @@ async function main() {
     }
   });
   console.log({transaction3});
-}
+
+  let dir = "";
+  let filenames: string[] = [];
+  // const dir = path.join(process.cwd(), 'historical_data');
+  dir = "C:/Users/rumbl/repos/stock_scrape/historical_data/";
+  fs.readdirSync(dir).forEach(file => {
+    filenames.push(file);
+  });
+
+
+  filenames.forEach(async(file) => {
+    await promises.readFile(dir + file, "utf-8")
+    await Papa.parse(file, {complete: async(results) => {
+      console.log("CSV Data: ", results);
+      results.data.slice(1).forEach(async(row: any) => {
+        await prisma.stock.create({
+          data: {
+            name: ,
+            ticker: ,
+            index: ,
+            price: ,
+            last_updated: 
+          }
+        });
+
+        await prisma.historicalData.create({
+         data: {
+          date: row[0],
+          close: row[1],
+          volume: row[2],
+          open: row[3],
+          high: row[4],
+          low: row[5],
+          stockId: 
+         } 
+        });
+      })
+    }});
+    });
+  
+};
 main()
   .then(() => prisma.$disconnect())
   .catch(async (e) => {
