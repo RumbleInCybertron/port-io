@@ -4,6 +4,16 @@ const prisma = new PrismaClient();
 
 export async function createTransactions() {
   const portfolioId = "cljo52qkk0008lhtsm6cn6wse";
+  await prisma.portfolio.update({
+    where: {id: portfolioId},
+    data: {ttl_value: 0}
+  });
+  await prisma.fiat.update({
+    where: {portfolioId: portfolioId},
+    data: {
+      amount: 0
+    }
+  })
   await prisma.stockAsset.deleteMany({
     where: { portfolioId: portfolioId },
   });
