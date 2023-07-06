@@ -1,8 +1,8 @@
 import '@/app/styles/globals.css'
-// import { LineChart } from "@/components/charts/LineChart";
-import { LineChart } from "@/components/charts/AssetLineChart";
-import {  DoubleLineChart } from "@/components/charts/DoubleLineChart";
-import { getThirtyDays } from "@/utils/getThirtyDays";
+import { LineChart } from "@/components/charts/LineChart";
+// import { LineChart } from "@/components/charts/AssetLineChart";
+import { DoubleLineChart } from "@/components/charts/DoubleLineChart";
+import { getDates } from "@/utils/getDates";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import Navbar from "@/components/Navbar";
@@ -62,8 +62,8 @@ export default async function LineChartPage() {
     }
   });
   console.log("Assets: ", user?.portfolios);
-  console.log("3rd Portfolio: ", user?.portfolios[2]);
-  const cryptos: [{ name: string, ticker: string, amount: number, average: number, updatedAt: Date, id: string, transactions: TransactionProps[] }] = user?.portfolios[2].cryptoAssets as [{
+  console.log("1st Portfolio: ", user?.portfolios[0]);
+  const cryptos: [{ name: string, ticker: string, amount: number, average: number, updatedAt: Date, id: string, transactions: TransactionProps[] }] = user?.portfolios[0].cryptoAssets as [{
     name: string;
     ticker: string;
     amount: number;
@@ -72,7 +72,7 @@ export default async function LineChartPage() {
     id: string;
     transactions: TransactionProps[];
   }];
-  const stocks: [{ name: string, ticker: string, index: string, amount: number, average: number, updatedAt: Date, id: string, transactions: TransactionProps[] }] = user?.portfolios[2].stockAssets as [{
+  const stocks: [{ name: string, ticker: string, index: string, amount: number, average: number, updatedAt: Date, id: string, transactions: TransactionProps[] }] = user?.portfolios[0].stockAssets as [{
     name: string;
     ticker: string;
     index: string;
@@ -90,23 +90,43 @@ export default async function LineChartPage() {
 
   const transactions = user?.portfolios[2].stockAssets[0].transactions !== undefined
     ?
-      user?.portfolios[2].stockAssets[0].transactions.map((e) => {
-        const type = e.price > 0 ? "buy" : "sell";
-        const price = Math.abs(e.price);
-        return price;
-      })
+    user?.portfolios[2].stockAssets[0].transactions.map((e) => {
+      const type = e.price > 0 ? "buy" : "sell";
+      const price = Math.abs(e.price);
+      return price;
+    })
     :
-      [];
+    [];
   console.log("Transactions: ", transactions);
 
+  const aapl_hist = await prisma.historicalData.findMany({ 
+    where: { 
+      ticker: "AAPL",
+      date: {
+        lte: new Date("2023-07-01"),
+        gte: new Date("2023-05-01")
+      }
+    }, 
+    orderBy: { date: "asc" } });
+
   // TODO: Eventually User will choose 1m, 5m, 15m, 1d, 1w etc to display data
-  const thirtyDays = getThirtyDays();
+  const dates = getDates(aapl_hist.length);
 
   const data = {
-    labels: thirtyDays,
-    datasets: [{
-      data: transactions,
-    },
+    labels: dates,
+    datasets: [
+      {
+        label: "Transactions",
+        data: transactions,
+        borderColor: 'rgb(53, 162, 235)',
+        backgroundColor: 'rgba(53, 162, 235, 0.5)',
+      }, 
+      {
+        label: "AAPL",
+        data: aapl_hist.map((e) => e.close!),
+        borderColor: 'rgb(255, 99, 132)',
+        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+      }
     ]
   };
   // const data = {
@@ -126,9 +146,9 @@ export default async function LineChartPage() {
   return (
     <>
       <Navbar />
-      {/* <LineChart {...data} /> */}
+      <LineChart {...data} />
       {/* <DoubleLineChart /> */}
-      <LineChart />
+      {/* <LineChart /> */}
     </>
   )
 }
