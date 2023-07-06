@@ -94,8 +94,8 @@ model Transaction {
   createdAt     DateTime     @default(now()) @map("created_at")
   cryptoAssetId String?
   stockAssetId  String?
-  CryptoAsset   CryptoAsset? @relation(fields: [cryptoAssetId], references: [id])
-  StockAsset    StockAsset?  @relation(fields: [stockAssetId], references: [id])
+  CryptoAsset   CryptoAsset? @relation(fields: [cryptoAssetId], references: [id], onDelete: Cascade)
+  StockAsset    StockAsset?  @relation(fields: [stockAssetId], references: [id], onDelete: Cascade)
 }
 
 model Profit {
@@ -104,8 +104,8 @@ model Profit {
   createdAt     DateTime     @default(now()) @map("created_at")
   cryptoAssetId String?
   stockAssetId  String?
-  CryptoAsset   CryptoAsset? @relation(fields: [cryptoAssetId], references: [id])
-  StockAsset    StockAsset?  @relation(fields: [stockAssetId], references: [id])
+  CryptoAsset   CryptoAsset? @relation(fields: [cryptoAssetId], references: [id], onDelete: Cascade)
+  StockAsset    StockAsset?  @relation(fields: [stockAssetId], references: [id], onDelete: Cascade)
 }
 
 model Loss {
@@ -114,8 +114,8 @@ model Loss {
   createdAt     DateTime     @default(now()) @map("created_at")
   cryptoAssetId String?
   stockAssetId  String?
-  CryptoAsset   CryptoAsset? @relation(fields: [cryptoAssetId], references: [id])
-  StockAsset    StockAsset?  @relation(fields: [stockAssetId], references: [id])
+  CryptoAsset   CryptoAsset? @relation(fields: [cryptoAssetId], references: [id], onDelete: Cascade)
+  StockAsset    StockAsset?  @relation(fields: [stockAssetId], references: [id], onDelete: Cascade)
 }
 
 model Fiat {
