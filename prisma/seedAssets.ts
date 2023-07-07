@@ -144,8 +144,13 @@ export async function createTransactions() {
     WHERE "portfolioId" = ${String(portfolioId)};`;
 
     await prisma.$executeRaw`
+    UPDATE "StockAsset"
+    SET "amount" = "amount" - ${i.units}
+    WHERE "id" = ${String(asset.id)};`;
+
+    await prisma.$executeRaw`
     UPDATE "Portfolio"
-    SET "ttl_value" = "ttl_value" + ${Number(i.units) * Number(i.price)}
+    SET "ttl_value" = "ttl_value" + ${Number(profit)}
     WHERE "id" = ${String(portfolioId)};`;
   });
 }
