@@ -41,11 +41,14 @@ export const StockAsset = ({ id, name, ticker, index, amount, average, updatedAt
   const router = useRouter();
   return (
     <div className="text-inherit p-2" onClick={() => router.push(`/portfolio/asset/${id}`)}>
-      <small>{name}: {ticker} </small>
-      <small>{name}: {index} </small>
-      <small>Shares: {amount} ${average}</small>
-      <small>Last Updated: {updatedAt.toDateString()}</small>
-      <ReactMarkdown>{name}</ReactMarkdown>
+      <div className="font-bold text-xl">{name}</div>
+      <div className="mx-2">
+        <div className="text-xs">Symbol: {ticker} </div>
+        <div className="text-xs">Index: {index} </div>
+        <div className="text-xs">Shares: {amount}</div>
+        <div className="text-xs">Average: ${average.toFixed(2)}</div>
+        <div className="text-xs">Last Updated: {updatedAt.toDateString()}</div>
+      </div>
     </div>
   )
 }
