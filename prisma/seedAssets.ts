@@ -83,6 +83,12 @@ export async function createTransactions() {
       average: average,
     },
   });
+
+  await prisma.$executeRaw`
+  UPDATE "Portfolio"
+  SET "ttl_value" = "ttl_value" + ${Number(totalShares) * Number(average)}
+  WHERE "id" = ${String(portfolioId)};`;
+
   const shortTransactionData = [
     {
       price: 185.5,
