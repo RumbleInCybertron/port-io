@@ -8,6 +8,9 @@ import { authOptions } from "@/lib/auth";
 import Navbar from "@/components/Navbar";
 import { TransactionProps } from '@/components/portfolio/Transaction';
 
+type Longs = number[];
+type Shorts = number[];
+
 export default async function LineChartPage() {
   const session = await getServerSession(authOptions);
   console.log("Session Data: ", session);
@@ -62,8 +65,8 @@ export default async function LineChartPage() {
     }
   });
   console.log("Assets: ", user?.portfolios);
-  console.log("1st Portfolio: ", user?.portfolios[0]);
-  const cryptos: [{ name: string, ticker: string, amount: number, average: number, updatedAt: Date, id: string, transactions: TransactionProps[] }] = user?.portfolios[0].cryptoAssets as [{
+  console.log("2nd Portfolio: ", user?.portfolios[2]);
+  const cryptos: [{ name: string, ticker: string, amount: number, average: number, updatedAt: Date, id: string, transactions: TransactionProps[] }] = user?.portfolios[2].cryptoAssets as [{
     name: string;
     ticker: string;
     amount: number;
@@ -72,7 +75,7 @@ export default async function LineChartPage() {
     id: string;
     transactions: TransactionProps[];
   }];
-  const stocks: [{ name: string, ticker: string, index: string, amount: number, average: number, updatedAt: Date, id: string, transactions: TransactionProps[] }] = user?.portfolios[0].stockAssets as [{
+  const stocks: [{ name: string, ticker: string, index: string, amount: number, average: number, updatedAt: Date, id: string, transactions: TransactionProps[] }] = user?.portfolios[2].stockAssets as [{
     name: string;
     ticker: string;
     index: string;
@@ -91,36 +94,54 @@ export default async function LineChartPage() {
   const transactions = user?.portfolios[2].stockAssets[0].transactions !== undefined
     ?
     user?.portfolios[2].stockAssets[0].transactions.map((e) => {
-      const type = e.price > 0 ? "buy" : "sell";
+      const type = e.type === "long" ? "buy" : "sell";
       const price = Math.abs(e.price);
-      return price;
+      return { type, price };
     })
     :
     [];
-  console.log("Transactions: ", transactions);
 
-  const aapl_hist = await prisma.historicalData.findMany({ 
-    where: { 
+  let longs: number[] = [], shorts: number[] = [];
+  transactions.forEach((e) =>
+    e.type === "buy"
+      ? longs.push(e.price)
+      : shorts.push(e.price)
+  );
+
+  const startDate = new Date("2023-05-01");
+  const endDate = new Date("2023-06-30");
+
+  const aapl_hist = await prisma.historicalData.findMany({
+    where: {
       ticker: "AAPL",
       date: {
-        lte: new Date("2023-07-01"),
-        gte: new Date("2023-05-01")
+        lte: endDate,
+        gte: startDate
       }
-    }, 
-    orderBy: { date: "asc" } });
+    },
+    orderBy: { date: "asc" }
+  });
+  console.log("Apple Historical Data: ", aapl_hist);
 
   // TODO: Eventually User will choose 1m, 5m, 15m, 1d, 1w etc to display data
-  const dates = getDates(aapl_hist.length);
+  const dates = getDates(startDate, endDate);
+  console.log("Dates: ", dates);
 
   const data = {
     labels: dates,
     datasets: [
       {
-        label: "Transactions",
-        data: transactions,
+        label: "Longs",
+        data: longs,
         borderColor: 'rgb(53, 162, 235)',
         backgroundColor: 'rgba(53, 162, 235, 0.5)',
-      }, 
+      },
+      {
+        label: "Shorts",
+        data: shorts,
+        borderColor: 'rgb(255, 255, 0)',
+        backgroundColor: 'rgba(0, 100, 235, 0.5)',
+      },
       {
         label: "AAPL",
         data: aapl_hist.map((e) => e.close!),
