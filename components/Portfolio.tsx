@@ -26,14 +26,15 @@ export const GetPortfolio = (props: { portfolio: PortfolioProps, profits: Profit
   console.log("Losses: ", props.losses);
 
   let p_ttl = 0
-  props.profits.forEach((p)=> {p_ttl += p.amount;})
+  props.profits.forEach((p) => { p_ttl += p.amount; })
   console.log("p_ttl: ", p_ttl);
 
   return (
     <>
       <Navbar />
       <div className="m-4 container text-yellow-600">
-        <div>{props.portfolio.name}
+        <div>
+          <div className="text-xl font-bold">{props.portfolio.name}</div>
           <div>Total Profits: ${p_ttl.toFixed(2)}{
             props.profits !== undefined && props.profits.length > 0
               ? (
