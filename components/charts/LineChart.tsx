@@ -50,7 +50,6 @@ export function LineChart(data: DataProps) {
     scales: {
       xAxis: {
         display: false,
-        maxTicksLimit: 30,
       },
       y: {
         display: true,
