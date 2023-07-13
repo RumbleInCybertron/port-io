@@ -18,14 +18,16 @@ export const Selector = (stocks: StockProps[], stock: StockProps) => {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    const getStockData = async () => {
-      const res = await fetch(`/api/stock/${ticker}`);
-      // console.log("Response /api/stock/type/ticker: ", res.json());
-    }
-
-    getStockData();
-  }, [ticker]);
+  // useEffect(() => {
+  //   // const getStockData = async () => {
+  //   //   console.log("Ticker for URI: ", ticker);
+  //   //   // const res = await fetch(`/api/stock/${ticker}`);
+  //   //   // console.log("Response /api/stock/type/ticker: ", res.json());
+  //   // }
+  //   // router.push(`/api/stock/${ticker}`)
+    
+  //   // getStockData();
+  // }, [ticker, router]);
   
 
   return (
@@ -72,6 +74,7 @@ export const Selector = (stocks: StockProps[], stock: StockProps) => {
                 setOpen(false);
                 setInputValue("");
                 setTicker(stock?.ticker);
+                router.push(uri + stock?.ticker);
               }
             }}
           >
