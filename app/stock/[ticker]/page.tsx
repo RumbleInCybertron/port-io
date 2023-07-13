@@ -8,9 +8,13 @@ import { authOptions } from "@/lib/auth";
 import Navbar from "@/components/Navbar";
 import { TransactionProps } from '@/components/portfolio/Transaction';
 
-export default async function LineChartPage() {
+export default async function StockPage({params}: { params: { ticker: string }}) {
+  const stock = await prisma.stock.findFirstOrThrow({
+    where: { ticker: String(params.ticker) },
+  });
+  
   const session = await getServerSession(authOptions);
-  console.log("Session Data: ", session);
+  // console.log("Session Data: ", session);
   const user = await prisma.user.findFirst({
     where: {
       email: String(session?.user?.email)
@@ -61,8 +65,8 @@ export default async function LineChartPage() {
       }
     }
   });
-  console.log("Assets: ", user?.portfolios);
-  console.log("2nd Portfolio: ", user?.portfolios[2]);
+  // console.log("Assets: ", user?.portfolios);
+  // console.log("2nd Portfolio: ", user?.portfolios[2]);
   const cryptoAssets: [{ name: string, ticker: string, amount: number, average: number, updatedAt: Date, id: string, transactions: TransactionProps[] }] = user?.portfolios[2].cryptoAssets as [{
     name: string;
     ticker: string;
@@ -83,10 +87,10 @@ export default async function LineChartPage() {
     transactions: TransactionProps[];
   }];
 
-  console.log("Crypto Asset Array: ", cryptoAssets);
-  console.log("Stock Asset Array: ", stockAssets);
+  // console.log("Crypto Asset Array: ", cryptoAssets);
+  // console.log("Stock Asset Array: ", stockAssets);
   const assets = cryptoAssets.concat(stockAssets);
-  console.log("Assets Array: ", assets);
+  // console.log("Assets Array: ", assets);
 
   const transactions = user?.portfolios[2].stockAssets[0].transactions !== undefined
     ?
@@ -109,22 +113,33 @@ export default async function LineChartPage() {
   const startDate = new Date("2023-05-01");
   const endDate = new Date("2023-06-30");
 
-  const aapl_hist = await prisma.historicalData.findMany({
-    where: {
-      ticker: "AAPL",
-      date: {
-        lte: endDate,
-        gte: startDate
-      }
-    },
-    orderBy: { date: "asc" }
-  });
-  console.log("Apple Historical Data: ", aapl_hist);
-  const marketDates = aapl_hist.map((e) => e.date.toLocaleDateString('en-US'));
-  console.log("Market Dates: ", marketDates);
+  const history = await prisma.historicalData.findMany({
+      where: {
+        ticker: stock.ticker,
+        date: {
+          lte: endDate,
+          gte: startDate
+        }
+      },
+      orderBy: { date: "asc" }
+    });
+
+  // const aapl_hist = await prisma.historicalData.findMany({
+  //   where: {
+  //     ticker: "AAPL",
+  //     date: {
+  //       lte: endDate,
+  //       gte: startDate
+  //     }
+  //   },
+  //   orderBy: { date: "asc" }
+  // });
+  // console.log("Apple Historical Data: ", aapl_hist);
+  const marketDates = history.map((e) => e.date.toLocaleDateString('en-US'));
+  // console.log("Market Dates: ", marketDates);
   // TODO: Eventually User will choose 1m, 5m, 15m, 1d, 1w etc to display data
   const dates = getDates(startDate, endDate);
-  console.log("Dates: ", dates);
+  // console.log("Dates: ", dates);
 
   const data = {
     labels: marketDates,
@@ -143,7 +158,7 @@ export default async function LineChartPage() {
       // },
       {
         label: "AAPL",
-        data: aapl_hist.map((e) => e.close!),
+        data: history.map((e) => e.close!),
         borderColor: 'rgb(255, 99, 132)',
         backgroundColor: 'rgba(255, 99, 132, 0.5)',
       }

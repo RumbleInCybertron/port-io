@@ -4,7 +4,7 @@ import { Selector } from "@/components/Selector";
 
 export default async function StockSelectPage() {
   const stocks = await prisma.stock.findMany({
-    select: { name: true, ticker: true }
+    select: { ticker: true }
   });
 
   return (

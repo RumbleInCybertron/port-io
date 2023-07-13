@@ -25,12 +25,12 @@ export default function Modal({ children }: ModalProps) {
     [onDismiss, overlay, wrapper]
   );
 
-  const onKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLDivElement>) => {
-      if (e.key === "Escape") onDismiss();
-    },
-    [onDismiss]
-  );
+  // const onKeyDown = useCallback(
+  //   (e: React.KeyboardEvent<HTMLDivElement>) => {
+  //     if (e.key === "Escape") onDismiss();
+  //   },
+  //   [onDismiss]
+  // );
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
