@@ -7,8 +7,13 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import Navbar from "@/components/Navbar";
 import { TransactionProps } from '@/components/portfolio/Transaction';
+import { Selector } from '@/components/Selector';
 
 export default async function StockPage({params}: { params: { ticker: string }}) {
+  const stocks = await prisma.stock.findMany({
+    select: { ticker: true }
+  });
+
   const stock = await prisma.stock.findFirstOrThrow({
     where: { ticker: String(params.ticker) },
   });
@@ -217,7 +222,7 @@ export default async function StockPage({params}: { params: { ticker: string }})
           </div>
         </div>
       </form>
-
+      <Selector {...stocks} />
       {/* <DoubleLineChart /> */}
       {/* <LineChart /> */}
     </>
