@@ -39,7 +39,7 @@ const Appbar = () => {
             <span className="text-gray-500 hover:text-gray-900">Home</span>
           </Link>
           <Link href={uri}>
-            <span className="text-gray-500 hover:text-gray-900">Assets</span>
+            <span className="text-gray-500 hover:text-gray-900">Portfolios</span>
           </Link>
           <Link href="/stock/AAPL"> {/*TODO: set to last visited / save in a session*/}
             <span className="text-gray-500 hover:text-gray-900">Stocks</span>
