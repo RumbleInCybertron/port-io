@@ -65,8 +65,8 @@ export function LineChart(data: DataProps) {
   return (
     <>
       {/* line chart */}
-      <div className="w-1/2">
-      <div className="w-[150px] mx-auto mt-10 text-xl">ラインチャート</div>
+      <div>
+        <div className="w-[150px] mx-auto mt-10 text-xl">ラインチャート</div>
         <Line data={data} width={100} height={40} options={options} />
       </div>
     </>
