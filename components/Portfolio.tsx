@@ -117,7 +117,7 @@ export const GetPortfolios = ({ portfolios }: { portfolios: PortfolioProps[] }) 
   return (
     <>
       <Navbar />
-      <Accordion {...portfolios}/>
+      <Accordion {...portfolios} />
     </>
   )
 }
@@ -127,11 +127,11 @@ export const Portfolio = ({ ...portfolio }: PortfolioProps) => {
   const uri = "/portfolio/" + portfolio.id;
 
   return (
-    <div onClick={() =>
+    <div className="cursor-pointer" onClick={() =>
       router.push(uri)
     }>
-      <small>{portfolio.name}</small>
-      <ReactMarkdown>{portfolio.name}</ReactMarkdown>
+      <div>Number of Assets: {portfolio.stockAssets?.length! + portfolio.cryptoAssets?.length!}</div>
+      <small className="text-slate-300">Total Value: ${portfolio.ttl_value.toFixed(2)}</small>
     </div>
   )
 }
