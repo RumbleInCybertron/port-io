@@ -14,6 +14,7 @@ export default async function PortfoliosPage() {
     select: {
       id: true,
       name: true,
+      ttl_value: true,
       stockAssets: { select: { name: true, ticker: true, index: true, amount: true, average: true, updatedAt: true, id: true } },
       cryptoAssets: { select: { name: true, ticker: true, amount: true, average: true, updatedAt: true, id: true } }
     }
