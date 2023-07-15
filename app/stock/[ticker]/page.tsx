@@ -9,7 +9,7 @@ import Navbar from "@/components/Navbar";
 import { TransactionProps } from '@/components/portfolio/Transaction';
 import { Selector } from '@/components/Selector';
 
-export default async function StockPage({params}: { params: { ticker: string }}) {
+export default async function StockPage({ params }: { params: { ticker: string } }) {
   const stocks = await prisma.stock.findMany({
     select: { ticker: true }
   });
@@ -17,7 +17,7 @@ export default async function StockPage({params}: { params: { ticker: string }})
   const stock = await prisma.stock.findFirstOrThrow({
     where: { ticker: String(params.ticker) },
   });
-  
+
   const session = await getServerSession(authOptions);
   // console.log("Session Data: ", session);
   const user = await prisma.user.findFirst({
@@ -99,7 +99,7 @@ export default async function StockPage({params}: { params: { ticker: string }})
 
   const transactions = user?.portfolios[2].stockAssets[0].transactions !== undefined
     ?
-    user?.portfolios[2].stockAssets[0].transactions.map((e) => {
+    user?.portfolios[2].stockAssets[0].transactions.map((e: any) => {
       const type = e.type === "long" ? "buy" : "sell";
       const price = Math.abs(e.price);
       const createdAt = e.createdAt;
@@ -109,7 +109,7 @@ export default async function StockPage({params}: { params: { ticker: string }})
     [];
 
   let longs: object[] = [], shorts: object[] = [];
-  transactions.forEach((e) =>
+  transactions.forEach((e: any) =>
     e.type === "buy"
       ? longs.push({ price: e.price, createdAt: e.createdAt })
       : shorts.push({ price: e.price, createdAt: e.createdAt })
@@ -119,15 +119,15 @@ export default async function StockPage({params}: { params: { ticker: string }})
   const endDate = new Date("2023-06-30");
 
   const history = await prisma.historicalData.findMany({
-      where: {
-        ticker: String(stock.ticker),
-        date: {
-          lte: endDate,
-          gte: startDate
-        }
-      },
-      orderBy: { date: "asc" }
-    });
+    where: {
+      ticker: String(stock.ticker),
+      date: {
+        lte: endDate,
+        gte: startDate
+      }
+    },
+    orderBy: { date: "asc" }
+  });
 
   // const aapl_hist = await prisma.historicalData.findMany({
   //   where: {
@@ -140,7 +140,7 @@ export default async function StockPage({params}: { params: { ticker: string }})
   //   orderBy: { date: "asc" }
   // });
   // console.log("Apple Historical Data: ", aapl_hist);
-  const marketDates = history.map((e) => e.date.toLocaleDateString('en-US'));
+  const marketDates = history.map((e: any) => e.date.toLocaleDateString('en-US'));
   // console.log("Market Dates: ", marketDates);
   // TODO: Eventually User will choose 1m, 5m, 15m, 1d, 1w etc to display data
   const dates = getDates(startDate, endDate);
@@ -163,7 +163,7 @@ export default async function StockPage({params}: { params: { ticker: string }})
       // },
       {
         label: "Stock",
-        data: history.map((e) => e.close!),
+        data: history.map((e: any) => e.close!),
         borderColor: 'rgb(255, 99, 132)',
         backgroundColor: 'rgba(255, 99, 132, 0.5)',
       }
@@ -187,7 +187,7 @@ export default async function StockPage({params}: { params: { ticker: string }})
     <>
       <Navbar />
 
-
+      <Selector {...stocks} />
       <LineChart {...data} />
       <form>
         <div className="flex">
@@ -222,7 +222,6 @@ export default async function StockPage({params}: { params: { ticker: string }})
           </div>
         </div>
       </form>
-      <Selector {...stocks} />
       {/* <DoubleLineChart /> */}
       {/* <LineChart /> */}
     </>
