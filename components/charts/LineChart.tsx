@@ -28,6 +28,8 @@ import { Line } from "react-chartjs-2";
 type DataProps = {
   labels: string[];
   datasets: { data: number[] }[];
+  width: number;
+  height: number;
 }
 
 export function LineChart(data: DataProps) {
@@ -67,7 +69,7 @@ export function LineChart(data: DataProps) {
       {/* line chart */}
       <div>
         <div className="w-[150px] mx-auto mt-10 text-xl">ラインチャート</div>
-        <Line data={data} width={100} height={40} options={options} />
+        <Line data={data} width={data.width} height={data.height} options={options} />
       </div>
     </>
   );

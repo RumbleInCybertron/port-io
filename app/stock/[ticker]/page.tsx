@@ -167,7 +167,9 @@ export default async function StockPage({ params }: { params: { ticker: string }
         borderColor: 'rgb(255, 99, 132)',
         backgroundColor: 'rgba(255, 99, 132, 0.5)',
       }
-    ]
+    ],
+    width: 100,
+    height: 40,
   };
   // const data = {
   //   labels: thirtyDays,
