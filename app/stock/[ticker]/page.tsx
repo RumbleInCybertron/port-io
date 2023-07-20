@@ -189,10 +189,12 @@ export default async function StockPage({ params }: { params: { ticker: string }
     <>
       <Navbar />
 
-      <div className="container flex w-screen">
-        <LineChart {...data} />
-        <div className="ml-2">
+      <div className="container w-screen">
+        <div className="ml-2 static -z-1">
           <Selector {...stocks} />
+        </div>
+        <div className="static z-1 my-2">
+          <LineChart {...data} />
         </div>
       </div>
       <form>

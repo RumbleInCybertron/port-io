@@ -31,7 +31,7 @@ export const Selector = (stocks: StockProps[], stock: StockProps) => {
 
 
   return (
-    <div className="w-72 font-medium h-80">
+    <div className="w-72 font-medium">
       <div
         onClick={() => setOpen(!open)}
         className={`bg-slate-100 w-full p-2 flex items-center justify-between rounded ${!ticker && "text-gray-700"
@@ -45,7 +45,7 @@ export const Selector = (stocks: StockProps[], stock: StockProps) => {
         <BiChevronDown size={20} className={`${open && "rotate-180"}`} />
       </div>
       <ul
-        className={`bg-white mt-2 overflow-y-auto ${open ? "max-h-60" : "max-h-0"
+        className={`bg-white  absolute -z-1 w-72 mt-2 overflow-y-auto ${open ? "max-h-60" : "max-h-0"
           } `}
       >
         <div className="flex items-center px-2 sticky top-0 bg-white">
