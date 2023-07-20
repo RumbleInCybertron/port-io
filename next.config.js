@@ -8,8 +8,8 @@ const nextConfig = {
   reactStrictMode: true,
   rewrites: async () => [
     {
-      source: "/public/myfile.html",
-      destination: "/app/pages/api/myfile.js",
+      source: "/sample-chart.html",
+      destination: "/sample-chart.html",
     },
   ],
   output: 'standalone',
