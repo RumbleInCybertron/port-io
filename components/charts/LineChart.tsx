@@ -67,7 +67,7 @@ export function LineChart(data: DataProps) {
   return (
     <>
       {/* line chart */}
-      <div>
+      <div className="container bg-slate-800 border-solid border-2 border-sky-500 rounded">
         <div className="w-[150px] mx-auto mt-10 text-xl">ラインチャート</div>
         <Line data={data} width={data.width} height={data.height} options={options} />
       </div>
