@@ -189,8 +189,12 @@ export default async function StockPage({ params }: { params: { ticker: string }
     <>
       <Navbar />
 
-      <Selector {...stocks} />
-      <LineChart {...data} />
+      <div className="container flex w-screen">
+        <LineChart {...data} />
+        <div className="ml-2">
+          <Selector {...stocks} />
+        </div>
+      </div>
       <form>
         <div className="flex">
           <label htmlFor="search-dropdown" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Your Email</label>
