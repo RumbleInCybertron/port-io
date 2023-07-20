@@ -1,10 +1,10 @@
 export const getLineChartData = async () => {
-  const startDate = new Date("2022-12-01");
-  const endDate = new Date("2023-01-07");
+  const startDate = new Date("2023-04-01");
+  const endDate = new Date("2023-05-07");
 
   const history = await prisma.historicalData.findMany({
     where: {
-      ticker: "AAPL",
+      ticker: "NVDA",
       date: {
         lte: endDate,
         gte: startDate
