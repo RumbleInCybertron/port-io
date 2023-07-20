@@ -25,23 +25,23 @@ export const Selector = (stocks: StockProps[], stock: StockProps) => {
   //   //   // console.log("Response /api/stock/type/ticker: ", res.json());
   //   // }
   //   // router.push(`/api/stock/${ticker}`)
-    
+
   //   // getStockData();
   // }, [ticker, router]);
-  
+
 
   return (
     <div className="w-72 font-medium h-80">
       <div
         onClick={() => setOpen(!open)}
-        className={`bg-white w-full p-2 flex items-center justify-between rounded ${!ticker && "text-gray-700"
+        className={`bg-slate-100 w-full p-2 flex items-center justify-between rounded ${!ticker && "text-gray-700"
           }`}
       >
         {ticker
           ? ticker?.length > 25
             ? ticker?.substring(0, 25) + "..."
             : ticker
-          : "Select Stock Ticker/Symbol"}
+          : "Select Stock"}
         <BiChevronDown size={20} className={`${open && "rotate-180"}`} />
       </div>
       <ul
@@ -54,7 +54,7 @@ export const Selector = (stocks: StockProps[], stock: StockProps) => {
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value.toLowerCase())}
-            placeholder="Enter stock name"
+            placeholder="Enter stock symbol"
             className="placeholder:text-gray-700 p-2 outline-none"
           />
         </div>
