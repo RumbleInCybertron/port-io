@@ -11,16 +11,10 @@ import useDarkMode from "@/utils/hooks/useDarkMode";
 
 const Appbar = () => {
   const router = useRouter();
-  const pathname = usePathname();
 
   const { data: session, status } = useSession();
   const user = session?.user;
   const [colorTheme, setTheme] = useDarkMode();
-
-  const handleClick = () => {
-    const email = user?.email;
-    router.push(pathname! + "?email=" + email);
-  }
 
   const uri = "/portfolios/" + user?.email;
 
@@ -69,7 +63,7 @@ const Appbar = () => {
             <>
               <button
                 type="button"
-                onClick={(handleClick)}
+                onClick={()=>router.push("/profile")}
               >
                 {<FiUser className="ml-1" />}
               </button>
