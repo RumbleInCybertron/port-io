@@ -32,6 +32,9 @@ const Appbar = () => {
           <Link href="/">
             <span className="text-gray-500 hover:text-gray-900">Home</span>
           </Link>
+          <Link href={"/pricing"}>
+            <span className="text-gray-500 hover:text-gray-900">Pricing</span>
+          </Link>
           <Link href={uri}>
             <span className="text-gray-500 hover:text-gray-900">Portfolios</span>
           </Link>
